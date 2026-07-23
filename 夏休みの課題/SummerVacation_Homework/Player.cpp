@@ -8,7 +8,7 @@ namespace
 	constexpr int kWidth = 32;
 	constexpr int kHeight = 32;
 
-	// 初期HP
+	// 初期Status
 	constexpr int kDefaultHP = 100;
 	constexpr int kDefaultMP = 100;
 	constexpr int kDefaultAttack = 100;
