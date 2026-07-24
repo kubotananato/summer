@@ -20,7 +20,10 @@ private:
 
 	//シーンで使用するリソースのハンドル
 	int m_playerIdleHandle;
+	int m_playerRunHandle;
+	int m_enemyHandle;
 
+	int m_isHit;
 
 	// ゲームオーバーになったか?
 	bool m_isGameover;

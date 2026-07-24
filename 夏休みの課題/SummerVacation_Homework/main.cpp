@@ -46,7 +46,7 @@ int WINAPI WinMain( _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 		// 画面のリフレッシュレートにかかわらず1/60経過するまで待つ
 		while(GetNowHiPerformanceCount() - start < 16667);
 		{
-			// 時間経過まで何もせずに待つ
+			Sleep(1); 
 		}
 
 	}

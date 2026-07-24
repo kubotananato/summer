@@ -153,6 +153,7 @@
   <ItemGroup>
     <ClCompile Include="Bg.cpp" />
     <ClCompile Include="Enemy.cpp" />
+    <ClCompile Include="HealPoint.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="SceneMain.cpp" />
@@ -162,6 +163,7 @@
     <ClInclude Include="Bg.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="HealPoint.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="SceneMain.h" />
     <ClInclude Include="SceneTitle.h" />

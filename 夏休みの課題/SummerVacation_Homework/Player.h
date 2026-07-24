@@ -25,6 +25,7 @@ public:
 
 	// グラフィックの設定
 	void SetIdleHandle(int handle) { m_idleHandle = handle; }
+	void SetRunHandle(int handle) { m_runHandle = handle; }
 
 
 	// 位置取得
@@ -43,14 +44,18 @@ public:
 	bool IsDead() const;
 
 private:
-	Direction m_dir = Direction::Right; // 初期向き
+//	Direction m_dir = Direction::Right; // 初期向き
 
 	// グラフィックハンドル
 	int m_idleHandle;
+	int m_runHandle;
+
 	//アニメーション管理用変数
 	int m_animFrame;
 	//左右反転フラグ
 	bool m_isFlip;
+	// 移動中かどうか
+	bool m_isMoving;
 
 	// 現在位置
 	Vec2 m_pos;

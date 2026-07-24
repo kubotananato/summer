@@ -13,7 +13,8 @@ public:
 	void Draw();
 
 	// グラフィックハンドルの設定
-	void SetGraphHandle(int handle) { m_graphHandle = handle; }
+	void SetEIdleHandle(int handle) { m_IdleHandle = handle; }
+	void SetERunHandle(int handle) { m_RunHandle = handle; }
 
 
 	// 位置情報の取得
@@ -23,6 +24,8 @@ public:
 	// 当たり判定用
 	Vec2 GetColCenter() const;
 	float GetColRadius() const;
+
+
 
 	// 登場回数をしゅとくする
 //	int GetApperCount() const { return m_apperCount; }
@@ -35,7 +38,8 @@ private:
 
 private:
 	// グラフィックハンドル
-	int m_graphHandle;
+	int m_IdleHandle;
+	int m_RunHandle;
 
 //	int m_waitFrame;
 
@@ -48,6 +52,15 @@ private:
 	int m_hp;
 	int m_Attack;
 
+	//アニメーション管理用変数
+	int m_animFrame;
+	//左右反転フラグ
+	bool m_isFlip;
+	// 移動中かどうか
+	bool m_isMoving;
+
+	// 死亡フラグ
+	bool m_isDead;
 
 	// 登場回数
 //	int m_apperCount;

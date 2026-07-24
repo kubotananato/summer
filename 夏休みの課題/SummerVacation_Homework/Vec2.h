@@ -16,6 +16,12 @@ public:
 		y(y_)
 	{}
 
+	// ベクトル同士の引き算（- 演算子）
+	Vec2 operator-(const Vec2& rhs) const
+	{
+		return Vec2(x - rhs.x, y - rhs.y);
+	}
+
 	// ベクトルの長さの2乗を取得する
 	float SqLength() const
 	{
