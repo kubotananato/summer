@@ -34,7 +34,7 @@ public:
 
 private:
 	// のこぎりを初期位置に設定する
-	void Setup();
+//	void Setup();
 
 private:
 	// グラフィックハンドル

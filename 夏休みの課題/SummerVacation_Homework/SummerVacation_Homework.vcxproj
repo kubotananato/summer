@@ -156,6 +156,7 @@
     <ClCompile Include="HealPoint.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Scenebattle.cpp" />
     <ClCompile Include="SceneMain.cpp" />
     <ClCompile Include="SceneTitle.cpp" />
   </ItemGroup>
@@ -165,6 +166,7 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="HealPoint.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="Scenebattle.h" />
     <ClInclude Include="SceneMain.h" />
     <ClInclude Include="SceneTitle.h" />
     <ClInclude Include="Vec2.h" />

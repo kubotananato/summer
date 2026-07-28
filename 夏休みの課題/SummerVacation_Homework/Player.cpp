@@ -4,7 +4,7 @@
 
 namespace
 {
-	// グラフィックの切り取りサイズ（32x32px）
+	// グラフィックの切り取り
 	constexpr int kWidth = 32;
 	constexpr int kHeight = 32;
 
@@ -14,34 +14,29 @@ namespace
 	constexpr int kDefaultAttack = 100;
 	constexpr int kSpeed = 4;
 
-	// アニメーション関連の定義
-	constexpr int kIdleAnimNum = 6;     // 6コマ
-	constexpr int kRunAnimNum = 12;
+	constexpr int kWalkAnimNum = 3;
+	constexpr int kSingleAnimFrame = 6; // 1コマにかけるフレーム数
+	constexpr int kWalkAnimTotalFrame = kWalkAnimNum * kSingleAnimFrame;
 
-	//当たり判定の半径
+	// 当たり判定の半径
 	constexpr float kColRadius = 12.0f;
-
-	constexpr int kSingleAnimFrame = 4;
-
-	constexpr int kIdleAnimTotalFrame = kIdleAnimNum * kSingleAnimFrame;
-	constexpr int kRunAnimTotalFrame = kRunAnimNum * kSingleAnimFrame;
 }
 
 Player::Player() :
 	m_idleHandle(-1),
 	m_runHandle(-1),
 	m_animFrame(0),
-	m_isFlip(false),
 	m_isMoving(false),
 	m_angle(0.0f),
 	m_isLanding(0),
 	m_attack(0),
 	m_hp(0),
 	m_mp(0),
+	m_maxHp(0),
 	m_maxMp(0),
 	m_Speed(0),
-	m_isDead(false)
-//	m_dir(Direction::Right)
+	m_isDead(false),
+	m_dir(Direction::Down)
 {
 }
 
@@ -59,13 +54,13 @@ void Player::Init()
 
 	m_animFrame = 0;
 	m_isDead = false;
-//	m_dir = Direction::Right;
+	m_isMoving = false;
+	m_dir = Direction::Down; // 初期位置
 
-	m_hp = kDefaultHP;
+	m_maxHp = kDefaultHP;
 	m_maxMp = kDefaultMP;
 	m_attack = kDefaultAttack;
 	m_Speed = kSpeed;
-
 }
 
 void Player::End()
@@ -74,11 +69,7 @@ void Player::End()
 
 void Player::Update()
 {
-	m_animFrame++;
-
-
-
-	// コントローラーでキャラクターを移動させる
+	// コントローラー・キーボード入力でキャラクターを移動させる
 	if (!m_isDead)
 	{
 		int pad = GetJoypadInputState(DX_INPUT_KEY_PAD1);
@@ -87,35 +78,45 @@ void Player::Update()
 		m_vec.y = 0.0f;
 		m_isMoving = false;
 
-		// else if で繋ぐことで、同時にボタンが押されても1方向しか動かなくする！
 		if (pad & PAD_INPUT_UP)
 		{
 			m_vec.y = -1.0f;
+			m_dir = Direction::Up;     // 上向き
 			m_isMoving = true;
 		}
 		else if (pad & PAD_INPUT_DOWN)
 		{
 			m_vec.y = 1.0f;
+			m_dir = Direction::Down;   // 下向き
 			m_isMoving = true;
 		}
 		else if (pad & PAD_INPUT_LEFT)
 		{
 			m_vec.x = -1.0f;
+			m_dir = Direction::Left;   //左向き
 			m_isMoving = true;
-			m_isFlip = true;
 		}
 		else if (pad & PAD_INPUT_RIGHT)
 		{
 			m_vec.x = 1.0f;
+			m_dir = Direction::Right;  // 右向き
 			m_isMoving = true;
-			m_isFlip = false;
+		}
+
+		// 移動中だけアニメーションのフレームを進める
+		if (m_isMoving)
+		{
+			m_animFrame++;
+		}
+		else
+		{
+			m_animFrame = kSingleAnimFrame;
 		}
 
 		// 移動方向にスピードを掛けて移動
 		m_pos.x += m_vec.x * m_Speed;
 		m_pos.y += m_vec.y * m_Speed;
 	}
-
 
 	// 画面外判定
 	if (m_pos.y < 0.0f) { m_pos.y = 0.0f; }
@@ -126,35 +127,24 @@ void Player::Update()
 
 void Player::Draw()
 {
-	//移動中かどうかでアニメーションを変更する
-	int tempTotalFrame = kIdleAnimTotalFrame;
-	int tempHanndle = m_idleHandle;
-	if (m_isMoving)
-	{
-		tempTotalFrame = kRunAnimTotalFrame;
-		tempHanndle = m_runHandle;
-	}
-
-	//現在のフレーム数から表示したいコマ番号を計算で求める
-	int animNo = (m_animFrame % kIdleAnimTotalFrame) / kSingleAnimFrame;
+	int animNo = (m_animFrame % kWalkAnimTotalFrame) / kSingleAnimFrame;
 
 	if (m_isDead)
 	{
-		SetDrawBlendMode(DX_BLENDMODE_INVSRC, 0);
+		SetDrawBlendMode(DX_BLENDMODE_INVSRC, 255);
 	}
 
+	int srcX = animNo * kWidth;
 
-	int currentHandle = m_idleHandle; // デフォルトは待機用
-	if (m_isMoving)
-	{
-		currentHandle = m_runHandle;  // 移動中は走り用
-	}
+	int srcY = static_cast<int>(m_dir) * kHeight;
 
-	DrawRectGraph(static_cast<int>(m_pos.x), static_cast<int>(m_pos.y),
-		animNo * kWidth, 0,
+	DrawRectGraph(
+		static_cast<int>(m_pos.x), static_cast<int>(m_pos.y),
+		srcX, srcY,
 		kWidth, kHeight,
-		currentHandle, true, 
-		m_isFlip);
+		m_runHandle, true,
+		false
+	);
 
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
@@ -178,4 +168,11 @@ float Player::GetColRadius() const
 bool Player::IsDead() const
 {
 	return m_hp <= 0;
+}
+
+void Player::FullHeal()
+{
+	// HPとMPを最大値（初期値）まで回復
+	m_hp = m_maxHp;
+	m_mp = m_maxMp; 
 }

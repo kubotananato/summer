@@ -7,12 +7,11 @@ public:
 	// 方向をあらわす列挙型
 	enum class Direction
 	{
-		Down,
-		Left,
-		Right,
-		Up
+		Down,  // 下向き
+		Left,  // 左向き
+		Right, // 右向き
+		Up     // 上向き
 	};
-
 
 public:
 	Player();
@@ -27,7 +26,6 @@ public:
 	void SetIdleHandle(int handle) { m_idleHandle = handle; }
 	void SetRunHandle(int handle) { m_runHandle = handle; }
 
-
 	// 位置取得
 	Vec2 GetPos() const { return m_pos; }
 
@@ -37,23 +35,26 @@ public:
 
 	// HPの取得
 	int GetHp() const { return m_hp; }
+	int GetMp() const { return m_mp; }
 
-	// 敵の攻撃を食らったときの処理
-//	void OnHit();
+	// 向きの取得
+	Direction GetDir() const { return m_dir; }
 
 	bool IsDead() const;
 
+	void FullHeal();
+
 private:
-//	Direction m_dir = Direction::Right; // 初期向き
+	// 向き管理
+	Direction m_dir;
 
 	// グラフィックハンドル
 	int m_idleHandle;
 	int m_runHandle;
 
-	//アニメーション管理用変数
+	// アニメーション管理用変数
 	int m_animFrame;
-	//左右反転フラグ
-	bool m_isFlip;
+
 	// 移動中かどうか
 	bool m_isMoving;
 
@@ -73,6 +74,8 @@ private:
 	int m_hp;
 	// 残りMP
 	int m_mp;
+	// 最大HP
+	int m_maxHp;
 	// 最大MP
 	int m_maxMp;
 	// 移動速度
@@ -80,4 +83,3 @@ private:
 	// 死亡フラグ
 	bool m_isDead;
 };
-

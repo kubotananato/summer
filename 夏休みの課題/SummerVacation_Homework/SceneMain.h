@@ -2,6 +2,7 @@
 #include "Player.h"
 #include "Enemy.h"
 #include "Bg.h"
+#include "HealPoint.h"
 
 class SceneMain
 {
@@ -22,8 +23,10 @@ private:
 	int m_playerIdleHandle;
 	int m_playerRunHandle;
 	int m_enemyHandle;
+	int m_healPointHandle;
 
 	int m_isHit;
+	int m_isHealHit;
 
 	// ゲームオーバーになったか?
 	bool m_isGameover;
@@ -31,5 +34,6 @@ private:
 	Player m_player;
 	Enemy m_enemy;
 	Bg m_bg;
+	HealPoint m_healpoint;
 };
 
