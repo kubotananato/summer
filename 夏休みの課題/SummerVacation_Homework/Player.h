@@ -37,6 +37,9 @@ public:
 	int GetHp() const { return m_hp; }
 	int GetMp() const { return m_mp; }
 
+	// ダメージを受ける処理
+	void TakeDamage(int damage);
+
 	// 向きの取得
 	Direction GetDir() const { return m_dir; }
 

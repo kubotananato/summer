@@ -57,6 +57,8 @@ void Player::Init()
 	m_isMoving = false;
 	m_dir = Direction::Down; // 初期位置
 
+	m_hp = 10;
+	m_mp = 10;
 	m_maxHp = kDefaultHP;
 	m_maxMp = kDefaultMP;
 	m_attack = kDefaultAttack;
@@ -163,6 +165,20 @@ Vec2 Player::GetColCenter() const
 float Player::GetColRadius() const
 {
 	return kColRadius;
+}
+
+void Player::TakeDamage(int damage)
+{
+	if (m_isDead) return;
+
+	// HPを減らす
+	m_hp -= damage;
+
+	if (m_hp <= 0)
+	{
+		m_hp = 0;
+		m_isDead = true;
+	}
 }
 
 bool Player::IsDead() const

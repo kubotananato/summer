@@ -1,22 +1,10 @@
 ﻿  Bg.cpp
   Enemy.cpp
-C:\Users\naato\OneDrive\ドキュメント\GitHub\summer\夏休みの課題\SummerVacation_Homework\DxLib.h(12,10): error C1083: include ファイルを開けません。'DxCompileConfig.h':No such file or directory
-  (ソース ファイル 'Bg.cpp' をコンパイルしています)
-  
-C:\Users\naato\OneDrive\ドキュメント\GitHub\summer\夏休みの課題\SummerVacation_Homework\DxLib.h(12,10): error C1083: include ファイルを開けません。'DxCompileConfig.h':No such file or directory
-  (ソース ファイル 'Enemy.cpp' をコンパイルしています)
-  
   HealPoint.cpp
-C:\Users\naato\OneDrive\ドキュメント\GitHub\summer\夏休みの課題\SummerVacation_Homework\DxLib.h(12,10): error C1083: include ファイルを開けません。'DxCompileConfig.h':No such file or directory
-  (ソース ファイル 'HealPoint.cpp' をコンパイルしています)
-  
   main.cpp
-C:\Users\naato\OneDrive\ドキュメント\GitHub\summer\夏休みの課題\SummerVacation_Homework\DxLib.h(12,10): error C1083: include ファイルを開けません。'DxCompileConfig.h':No such file or directory
-  (ソース ファイル 'main.cpp' をコンパイルしています)
-  
   Player.cpp
-C:\Users\naato\OneDrive\ドキュメント\GitHub\summer\夏休みの課題\SummerVacation_Homework\DxLib.h(12,10): error C1083: include ファイルを開けません。'DxCompileConfig.h':No such file or directory
-  (ソース ファイル 'Player.cpp' をコンパイルしています)
-  
+  Scenebattle.cpp
+  SceneMain.cpp
   SceneTitle.cpp
   コードを生成中...
+  SummerVacation_Homework.vcxproj -> C:\Users\naato\OneDrive\ドキュメント\GitHub\summer\夏休みの課題\SummerVacation_Homework\x64\Debug\SummerVacation_Homework.exe

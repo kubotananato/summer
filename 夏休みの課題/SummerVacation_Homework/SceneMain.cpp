@@ -8,6 +8,7 @@ SceneMain::SceneMain():
 	m_enemyHandle(-1),
 	m_healPointHandle(-1),
 	m_isHit(false),
+	m_wasHit(false),
 	m_isHealHit(false),
 	m_isGameover(false)
 {
@@ -66,6 +67,11 @@ void SceneMain::Update()
 
 	m_isHit = (diff.SqLength() <= radiusSum * radiusSum);
   }
+  if (m_isHit && !m_wasHit)
+  {
+	  m_player.TakeDamage(10);
+  }
+  m_wasHit = m_isHit;
 
   {
 	  Vec2 diff = m_player.GetColCenter() - m_healpoint.GetColCenter();

@@ -25,8 +25,9 @@ private:
 	int m_enemyHandle;
 	int m_healPointHandle;
 
-	int m_isHit;
-	int m_isHealHit;
+	bool m_isHit;
+	bool m_wasHit;
+	bool m_isHealHit;
 
 	// ゲームオーバーになったか?
 	bool m_isGameover;
