@@ -1,15 +1,22 @@
 ﻿  Bg.cpp
   Enemy.cpp
-C:\Users\naato\OneDrive\ドキュメント\GitHub\summer\夏休みの課題\SummerVacation_Homework\Bg.cpp(2,10): error C1083: include ファイルを開けません。'DxLib.h':No such file or directory
-C:\Users\naato\OneDrive\ドキュメント\GitHub\summer\夏休みの課題\SummerVacation_Homework\Enemy.cpp(2,10): error C1083: include ファイルを開けません。'DxLib.h':No such file or directory
+C:\Users\naato\OneDrive\ドキュメント\GitHub\summer\夏休みの課題\SummerVacation_Homework\DxLib.h(12,10): error C1083: include ファイルを開けません。'DxCompileConfig.h':No such file or directory
+  (ソース ファイル 'Bg.cpp' をコンパイルしています)
+  
+C:\Users\naato\OneDrive\ドキュメント\GitHub\summer\夏休みの課題\SummerVacation_Homework\DxLib.h(12,10): error C1083: include ファイルを開けません。'DxCompileConfig.h':No such file or directory
+  (ソース ファイル 'Enemy.cpp' をコンパイルしています)
+  
   HealPoint.cpp
-C:\Users\naato\OneDrive\ドキュメント\GitHub\summer\夏休みの課題\SummerVacation_Homework\HealPoint.cpp(2,10): error C1083: include ファイルを開けません。'DxLib.h':No such file or directory
+C:\Users\naato\OneDrive\ドキュメント\GitHub\summer\夏休みの課題\SummerVacation_Homework\DxLib.h(12,10): error C1083: include ファイルを開けません。'DxCompileConfig.h':No such file or directory
+  (ソース ファイル 'HealPoint.cpp' をコンパイルしています)
+  
   main.cpp
-C:\Users\naato\OneDrive\ドキュメント\GitHub\summer\夏休みの課題\SummerVacation_Homework\main.cpp(1,10): error C1083: include ファイルを開けません。'DxLib.h':No such file or directory
+C:\Users\naato\OneDrive\ドキュメント\GitHub\summer\夏休みの課題\SummerVacation_Homework\DxLib.h(12,10): error C1083: include ファイルを開けません。'DxCompileConfig.h':No such file or directory
+  (ソース ファイル 'main.cpp' をコンパイルしています)
+  
   Player.cpp
-C:\Users\naato\OneDrive\ドキュメント\GitHub\summer\夏休みの課題\SummerVacation_Homework\Player.cpp(2,10): error C1083: include ファイルを開けません。'DxLib.h':No such file or directory
-  Scenebattle.cpp
-  SceneMain.cpp
-C:\Users\naato\OneDrive\ドキュメント\GitHub\summer\夏休みの課題\SummerVacation_Homework\SceneMain.cpp(2,10): error C1083: include ファイルを開けません。'DxLib.h':No such file or directory
+C:\Users\naato\OneDrive\ドキュメント\GitHub\summer\夏休みの課題\SummerVacation_Homework\DxLib.h(12,10): error C1083: include ファイルを開けません。'DxCompileConfig.h':No such file or directory
+  (ソース ファイル 'Player.cpp' をコンパイルしています)
+  
   SceneTitle.cpp
   コードを生成中...
