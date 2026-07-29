@@ -1,2 +1,15 @@
-﻿  SceneMain.cpp
-  SummerVacation_Homework.vcxproj -> C:\Users\KubotaNanato\Documents\GitHub\summer\夏休みの課題\SummerVacation_Homework\x64\Debug\SummerVacation_Homework.exe
+﻿  Bg.cpp
+  Enemy.cpp
+C:\Users\naato\OneDrive\ドキュメント\GitHub\summer\夏休みの課題\SummerVacation_Homework\Bg.cpp(2,10): error C1083: include ファイルを開けません。'DxLib.h':No such file or directory
+C:\Users\naato\OneDrive\ドキュメント\GitHub\summer\夏休みの課題\SummerVacation_Homework\Enemy.cpp(2,10): error C1083: include ファイルを開けません。'DxLib.h':No such file or directory
+  HealPoint.cpp
+C:\Users\naato\OneDrive\ドキュメント\GitHub\summer\夏休みの課題\SummerVacation_Homework\HealPoint.cpp(2,10): error C1083: include ファイルを開けません。'DxLib.h':No such file or directory
+  main.cpp
+C:\Users\naato\OneDrive\ドキュメント\GitHub\summer\夏休みの課題\SummerVacation_Homework\main.cpp(1,10): error C1083: include ファイルを開けません。'DxLib.h':No such file or directory
+  Player.cpp
+C:\Users\naato\OneDrive\ドキュメント\GitHub\summer\夏休みの課題\SummerVacation_Homework\Player.cpp(2,10): error C1083: include ファイルを開けません。'DxLib.h':No such file or directory
+  Scenebattle.cpp
+  SceneMain.cpp
+C:\Users\naato\OneDrive\ドキュメント\GitHub\summer\夏休みの課題\SummerVacation_Homework\SceneMain.cpp(2,10): error C1083: include ファイルを開けません。'DxLib.h':No such file or directory
+  SceneTitle.cpp
+  コードを生成中...
