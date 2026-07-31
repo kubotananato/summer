@@ -1,6 +1,7 @@
 #pragma once
 class Scenebattle
 {
+public:
 	Scenebattle();
 	~Scenebattle();
 

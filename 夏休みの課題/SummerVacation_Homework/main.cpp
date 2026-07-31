@@ -1,6 +1,15 @@
 ﻿#include "DxLib.h"
 #include "Game.h"
 #include "SceneMain.h"
+#include "SceneTitle.h"
+#include "SceneBattle.h"
+
+enum class SceneType
+{
+	Title, // タイトル画面
+	Main, // ステージ画面
+	Battle // バトル画面
+};
 
 
 // プログラムは WinMain から始まります
@@ -20,8 +29,13 @@ int WINAPI WinMain( _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 	SetDrawScreen(DX_SCREEN_BACK);
 
 	// ゲームシーンの作成
-	SceneMain scene;
-	scene.Init();
+	SceneTitle scenetitle;
+	SceneMain scenemain;
+	Scenebattle scenebattle;
+	
+	scenetitle.Init();
+	scenemain.Init();
+	scenebattle.Init();
 
 	while (ProcessMessage() == 0)
 	{
@@ -32,9 +46,14 @@ int WINAPI WinMain( _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 		ClearDrawScreen();
 
 		// ゲームの処理
-		scene.Update();
 
-		scene.Draw();
+		scenetitle.Update();
+		scenemain.Update();
+		scenebattle.Update();
+
+		scenetitle.Draw();
+		scenemain.Draw();
+		scenebattle.Draw();
 
 
 		// 画面の書き換え
@@ -51,7 +70,9 @@ int WINAPI WinMain( _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 
 	}
 
-	scene.End();
+	scenetitle.End();
+	scenemain.End();
+	scenebattle.End();
 
 	DxLib_End() ;				// ＤＸライブラリ使用の終了処理
 

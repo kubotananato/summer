@@ -1,10 +1,2 @@
-﻿  Bg.cpp
-  Enemy.cpp
-  HealPoint.cpp
-  main.cpp
-  Player.cpp
-  Scenebattle.cpp
-  SceneMain.cpp
-  SceneTitle.cpp
-  コードを生成中...
+﻿  SceneTitle.cpp
   SummerVacation_Homework.vcxproj -> C:\Users\naato\OneDrive\ドキュメント\GitHub\summer\夏休みの課題\SummerVacation_Homework\x64\Debug\SummerVacation_Homework.exe

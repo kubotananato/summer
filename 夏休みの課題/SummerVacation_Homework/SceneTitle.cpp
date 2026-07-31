@@ -12,6 +12,10 @@ void SceneTitle::Init()
 {
 }
 
+void SceneTitle::End()
+{
+}
+
 void SceneTitle::Update()
 {
 }
