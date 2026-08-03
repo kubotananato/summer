@@ -39,6 +39,8 @@ void SceneMain::Init()
 
 void SceneMain::End()
 {
+	isFinished = false;
+
 	//シーンで使用したリソースをメモリから削除
 	DeleteGraph(m_playerIdleHandle);
 	DeleteGraph(m_playerRunHandle);
@@ -70,6 +72,7 @@ void SceneMain::Update()
   if (m_isHit && !m_wasHit)
   {
 	  m_player.TakeDamage(10);
+	  isFinished = true; // ★ 敵とぶつかったらバトルシーンへ！
   }
   m_wasHit = m_isHit;
 

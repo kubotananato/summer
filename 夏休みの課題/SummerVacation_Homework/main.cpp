@@ -4,7 +4,7 @@
 #include "SceneTitle.h"
 #include "SceneBattle.h"
 
-enum class SceneType
+enum class Scene
 {
 	Title, // タイトル画面
 	Main, // ステージ画面
@@ -33,9 +33,8 @@ int WINAPI WinMain( _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 	SceneMain scenemain;
 	Scenebattle scenebattle;
 	
+	Scene currentScene = Scene::Title;
 	scenetitle.Init();
-	scenemain.Init();
-	scenebattle.Init();
 
 	while (ProcessMessage() == 0)
 	{
@@ -47,13 +46,50 @@ int WINAPI WinMain( _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 
 		// ゲームの処理
 
-		scenetitle.Update();
-		scenemain.Update();
-		scenebattle.Update();
+		switch (currentScene)
+		{
+		case Scene::Title:
+			scenetitle.Update();
+			if (scenetitle.isFinished)
+			{
+				scenetitle.End();
+				scenemain.Init();
+				currentScene = Scene::Main;
+			}
+			else // ★ else を追加（遷移したフレームは描画しない）
+			{
+				scenetitle.Draw();
+			}
+			break;
 
-		scenetitle.Draw();
-		scenemain.Draw();
-		scenebattle.Draw();
+		case Scene::Main:
+			scenemain.Update();
+			if (scenemain.isFinished)
+			{
+				scenemain.End();
+				scenebattle.Init();
+				currentScene = Scene::Battle;
+			}
+			else // ★ else を追加
+			{
+				scenemain.Draw();
+			}
+			break;
+
+		case Scene::Battle:
+			scenebattle.Update();
+			if (scenebattle.isFinished)
+			{
+				scenebattle.End();
+				scenemain.Init(); // バトルが終わったらメイン画面に戻る
+				currentScene = Scene::Main;
+			}
+			else // ★ else を追加
+			{
+				scenebattle.Draw();
+			}
+			break;
+		} 
 
 
 		// 画面の書き換え

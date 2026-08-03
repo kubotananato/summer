@@ -9,5 +9,7 @@ public:
 	void End();
 	void Update();
 	void Draw();
+
+	bool isFinished = false;
 };
 

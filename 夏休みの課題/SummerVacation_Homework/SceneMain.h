@@ -15,6 +15,8 @@ public:
 
 	void Update();
 	void Draw();
+
+	bool isFinished = false;
 	
 private:
 	int m_frameCount;
