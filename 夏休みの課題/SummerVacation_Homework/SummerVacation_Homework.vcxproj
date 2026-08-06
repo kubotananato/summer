@@ -155,6 +155,7 @@
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="HealPoint.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Map.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Scenebattle.cpp" />
     <ClCompile Include="SceneMain.cpp" />
@@ -165,6 +166,7 @@
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="HealPoint.h" />
+    <ClInclude Include="Map.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Scenebattle.h" />
     <ClInclude Include="SceneMain.h" />

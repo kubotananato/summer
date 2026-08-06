@@ -3,6 +3,7 @@
 #include "Enemy.h"
 #include "Bg.h"
 #include "HealPoint.h"
+#include "Map.h"
 
 class SceneMain
 {
@@ -38,5 +39,6 @@ private:
 	Enemy m_enemy;
 	Bg m_bg;
 	HealPoint m_healpoint;
+	Map m_map;
 };
 

@@ -20,6 +20,8 @@ SceneMain::~SceneMain()
 
 void SceneMain::Init()
 {
+	m_map.Init();
+
 	m_playerIdleHandle = LoadGraph("data/Player/PIdle.png");
 	m_playerRunHandle = LoadGraph("data/Player/Walk.png");
 	m_enemyHandle = LoadGraph("data/Enemy/EIdle.png");
@@ -35,11 +37,14 @@ void SceneMain::Init()
 	m_enemy.Init();
 	m_bg.Init();
 	m_healpoint.Init();
+
 }
 
 void SceneMain::End()
 {
 	isFinished = false;
+
+	m_map.End();
 
 	//シーンで使用したリソースをメモリから削除
 	DeleteGraph(m_playerIdleHandle);
@@ -88,6 +93,7 @@ void SceneMain::Update()
 
 void SceneMain::Draw()
 {
+	m_map.Draw();
 	m_bg.Draw();
 	m_enemy.Draw();
 	m_player.Draw();
