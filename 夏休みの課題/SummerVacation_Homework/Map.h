@@ -1,26 +1,27 @@
 ﻿#pragma once
+
+// マス目とマップ情報の定数定義（1280x720にピッタリ収まる設定）
+constexpr int CHIP_SIZE = 40; // 1マスの描画サイズ（ピクセル）
+constexpr int MAP_WIDTH = 32; // 横のマス数（1280 / 40 = 32）
+constexpr int MAP_HEIGHT = 18; // 縦のマス数（720 / 40 = 18）
+
 class Map
 {
-	public:
-		static const int CHIP_SIZE = 32;  // 1マス 32px
-		static const int MAP_WIDTH = 40;  // 横 40マス
-		static const int MAP_HEIGHT = 23; // 縦 23マス
+public:
+	Map();
+	~Map();
 
-		Map();
-		~Map();
+	void Init();
+	void End();
+	void Draw();
 
-		void Init();
-		void End();
-		void Draw();
+	// マス目座標 (x, y) が壁かどうか判定する関数
+	bool IsWall(int mapX, int mapY) const;
 
-		// CSV読み込み関数
-		void LoadCSV(const char* filePath);
+private:
+	void LoadCSV(const char* filePath);
 
-	private:
-		int m_wallHandle;
-		int m_floorHandle;
-
-		// マップデータ（23行 × 40列）
-		int m_mapData[MAP_HEIGHT][MAP_WIDTH];
+	int m_floorHandle;
+	int m_wallHandle;
+	int m_mapData[MAP_HEIGHT][MAP_WIDTH];
 };
-

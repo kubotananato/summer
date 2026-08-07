@@ -24,12 +24,22 @@ Map::~Map()
 
 void Map::Init()
 {
-	// 画像ファイルを読み込む
+	// 画像ファイルを読み込む（※実際の画像パスに合わせて変更してください）
 	m_floorHandle = LoadGraph("data/HealPoint/Map/floor.png");
-	m_wallHandle = LoadGraph("data/Map/wall.png");
+	m_wallHandle = LoadGraph("data/HealPoint/Map/wall.png");
+
+	// 読み込みチェック
+	if (m_floorHandle == -1)
+	{
+		OutputDebugStringA("床画像の読み込みに失敗しました\n");
+	}
+	if (m_wallHandle == -1)
+	{
+		OutputDebugStringA("壁画像の読み込みに失敗しました\n");
+	}
 
 	// CSVファイルを読み込む
-	LoadCSV("data/Map/map.csv");
+	LoadCSV("data/map.csv");
 }
 
 void Map::End()
@@ -42,24 +52,63 @@ void Map::End()
 void Map::LoadCSV(const char* filePath)
 {
 	std::ifstream file(filePath);
-	if (!file.is_open()) return;
+	if (!file.is_open())
+	{
+		OutputDebugStringA("★CSVファイルのオープンに失敗しました！\n");
+		return;
+	}
 
 	std::string line;
 	int y = 0;
 
 	while (std::getline(file, line) && y < MAP_HEIGHT)
 	{
+		// 【対策】ファイルの先頭(1行目)にあるBOM(隠し文字)を除去する
+		if (y == 0 && line.size() >= 3)
+		{
+			if (static_cast<unsigned char>(line[0]) == 0xEF &&
+				static_cast<unsigned char>(line[1]) == 0xBB &&
+				static_cast<unsigned char>(line[2]) == 0xBF)
+			{
+				line = line.substr(3); // 先頭の3バイトを削る
+			}
+		}
+
+		// Windowsの改行コード(\r)が含まれている場合は取り除く
+		if (!line.empty() && line.back() == '\r')
+		{
+			line.pop_back();
+		}
+
+		// 空行の場合はスキップ
+		if (line.empty()) continue;
+
 		std::stringstream ss(line);
 		std::string value;
 		int x = 0;
 
 		while (std::getline(ss, value, ',') && x < MAP_WIDTH)
 		{
-			m_mapData[y][x] = std::stoi(value);
+			try
+			{
+				if (!value.empty())
+				{
+					m_mapData[y][x] = std::stoi(value);
+				}
+				else
+				{
+					m_mapData[y][x] = 0;
+				}
+			}
+			catch (const std::exception&)
+			{
+				m_mapData[y][x] = 0;
+			}
 			x++;
 		}
 		y++;
 	}
+	OutputDebugStringA("★CSVファイルの読み込みに成功しました！\n");
 }
 
 void Map::Draw()
@@ -69,21 +118,38 @@ void Map::Draw()
 	{
 		for (int x = 0; x < MAP_WIDTH; x++)
 		{
-			// 描画する位置（ピクセル座標）を計算
-			int drawX = x * CHIP_SIZE;
-			int drawY = y * CHIP_SIZE;
+			// 1マス（40x40）ごとの描画領域を計算
+			int drawX1 = x * CHIP_SIZE;
+			int drawY1 = y * CHIP_SIZE;
+			int drawX2 = drawX1 + CHIP_SIZE;
+			int drawY2 = drawY1 + CHIP_SIZE;
 
-			// 数字に合わせて画像を切り替える
 			if (m_mapData[y][x] == 1)
 			{
-				// 1 のときは壁を描画
-				DrawGraph(drawX, drawY, m_wallHandle, TRUE);
+				// 描画輝度を下げて壁を少し暗く・重厚にする（RGB: 180, 180, 180）
+				SetDrawBright(180, 180, 180);
+				DrawExtendGraph(drawX1, drawY1, drawX2, drawY2, m_wallHandle, TRUE);
+				SetDrawBright(255, 255, 255); // 輝度を元に戻す
 			}
 			else
 			{
-				// 0 のときは床を描画
-				DrawGraph(drawX, drawY, m_floorHandle, TRUE);
+				// 0 のときは床を描画（通常描画）
+				DrawExtendGraph(drawX1, drawY1, drawX2, drawY2, m_floorHandle, TRUE);
 			}
 		}
 	}
+
+}
+
+// Map.cpp の一番下などに追加
+bool Map::IsWall(int mapX, int mapY) const
+{
+	// 画面外に出てしまう場合は壁扱いにして外に出られないようにする
+	if (mapX < 0 || mapX >= MAP_WIDTH || mapY < 0 || mapY >= MAP_HEIGHT)
+	{
+		return true;
+	}
+
+	// 1 だったら壁（true）、それ以外なら床（false）を返す
+	return m_mapData[mapY][mapX] == 1;
 }

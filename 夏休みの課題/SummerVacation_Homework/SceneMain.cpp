@@ -62,7 +62,7 @@ void SceneMain::Update()
 {
 	m_frameCount++;
 
-	m_player.Update();
+	m_player.Update(m_map);
 	m_enemy.Update();
 	m_bg.Update();
 	m_healpoint.Update(m_player);

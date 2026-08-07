@@ -1,6 +1,8 @@
 ﻿#pragma once
 #include "Vec2.h"
 
+class Map;
+
 class Player
 {
 public:
@@ -46,6 +48,8 @@ public:
 	bool IsDead() const;
 
 	void FullHeal();
+
+	void Update(const Map& map); // ← 引数に const Map& map を追加
 
 private:
 	// 向き管理

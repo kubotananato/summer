@@ -1,6 +1,7 @@
 ﻿#include "Player.h"
 #include "DxLib.h"
 #include "Game.h"
+#include "Map.h"
 
 namespace
 {
@@ -69,7 +70,7 @@ void Player::End()
 {
 }
 
-void Player::Update()
+void Player::Update(const Map& map) // ← ★引数に const Map& map を追加
 {
 	// コントローラー・キーボード入力でキャラクターを移動させる
 	if (!m_isDead)
@@ -95,7 +96,7 @@ void Player::Update()
 		else if (pad & PAD_INPUT_LEFT)
 		{
 			m_vec.x = -1.0f;
-			m_dir = Direction::Left;   //左向き
+			m_dir = Direction::Left;   // 左向き
 			m_isMoving = true;
 		}
 		else if (pad & PAD_INPUT_RIGHT)
@@ -115,9 +116,52 @@ void Player::Update()
 			m_animFrame = kSingleAnimFrame;
 		}
 
-		// 移動方向にスピードを掛けて移動
-		m_pos.x += m_vec.x * m_Speed;
-		m_pos.y += m_vec.y * m_Speed;
+		// --------------------------------------------------
+		// ★ここから：壁判定付きの移動処理（元の m_pos += を置き換え）
+		// --------------------------------------------------
+
+		// X軸方向の移動チェック
+		if (m_vec.x != 0.0f)
+		{
+			float nextX = m_pos.x + m_vec.x * m_Speed;
+
+			// 移動後のプレイヤー四角形の左右上下のマス座標を計算
+			int leftTile = static_cast<int>(nextX) / CHIP_SIZE;
+			int rightTile = static_cast<int>(nextX + kWidth - 1) / CHIP_SIZE;
+			int topTile = static_cast<int>(m_pos.y) / CHIP_SIZE;
+			int bottomTile = static_cast<int>(m_pos.y + kHeight - 1) / CHIP_SIZE;
+
+			// 四隅のどこにも壁がなければX座標を更新
+			if (!map.IsWall(leftTile, topTile) &&
+				!map.IsWall(rightTile, topTile) &&
+				!map.IsWall(leftTile, bottomTile) &&
+				!map.IsWall(rightTile, bottomTile))
+			{
+				m_pos.x = nextX;
+			}
+		}
+
+		// Y軸方向の移動チェック
+		if (m_vec.y != 0.0f)
+		{
+			float nextY = m_pos.y + m_vec.y * m_Speed;
+
+			// 移動後のプレイヤー四角形の左右上下のマス座標を計算
+			int leftTile = static_cast<int>(m_pos.x) / CHIP_SIZE;
+			int rightTile = static_cast<int>(m_pos.x + kWidth - 1) / CHIP_SIZE;
+			int topTile = static_cast<int>(nextY) / CHIP_SIZE;
+			int bottomTile = static_cast<int>(nextY + kHeight - 1) / CHIP_SIZE;
+
+			// 四隅のどこにも壁がなければY座標を更新
+			if (!map.IsWall(leftTile, topTile) &&
+				!map.IsWall(rightTile, topTile) &&
+				!map.IsWall(leftTile, bottomTile) &&
+				!map.IsWall(rightTile, bottomTile))
+			{
+				m_pos.y = nextY;
+			}
+		}
+		// --------------------------------------------------
 	}
 
 	// 画面外判定

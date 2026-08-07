@@ -99,9 +99,9 @@ int WINAPI WinMain( _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 		if(CheckHitKey(KEY_INPUT_ESCAPE)) break;
 
 		// 画面のリフレッシュレートにかかわらず1/60経過するまで待つ
-		while(GetNowHiPerformanceCount() - start < 16667);
+		while (GetNowHiPerformanceCount() - start < 16667)
 		{
-			Sleep(1); 
+			Sleep(1);
 		}
 
 	}
