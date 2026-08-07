@@ -25,7 +25,7 @@ Map::~Map()
 void Map::Init()
 {
 	// 画像ファイルを読み込む
-	m_floorHandle = LoadGraph("data/Map/floor.png");
+	m_floorHandle = LoadGraph("data/HealPoint/Map/floor.png");
 	m_wallHandle = LoadGraph("data/Map/wall.png");
 
 	// CSVファイルを読み込む

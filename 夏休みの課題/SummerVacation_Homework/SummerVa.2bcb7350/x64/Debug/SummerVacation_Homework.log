@@ -1,13 +1,2 @@
-﻿  Bg.cpp
-  Enemy.cpp
-  HealPoint.cpp
-  main.cpp
-  Map.cpp
-  Player.cpp
-  Scenebattle.cpp
-C:\Users\naato\OneDrive\ドキュメント\GitHub\summer\夏休みの課題\SummerVacation_Homework\Scenebattle.cpp(1,1): warning C4819: ファイルは、現在のコード ページ (932) で表示できない文字を含んでいます。データの損失を防ぐために、ファイルを Unicode 形式で保存してください。
-  SceneMain.cpp
-  SceneTitle.cpp
-C:\Users\naato\OneDrive\ドキュメント\GitHub\summer\夏休みの課題\SummerVacation_Homework\SceneTitle.cpp(1,1): warning C4819: ファイルは、現在のコード ページ (932) で表示できない文字を含んでいます。データの損失を防ぐために、ファイルを Unicode 形式で保存してください。
-  コードを生成中...
+﻿  Map.cpp
   SummerVacation_Homework.vcxproj -> C:\Users\naato\OneDrive\ドキュメント\GitHub\summer\夏休みの課題\SummerVacation_Homework\x64\Debug\SummerVacation_Homework.exe
