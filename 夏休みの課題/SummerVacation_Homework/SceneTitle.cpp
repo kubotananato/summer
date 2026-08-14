@@ -1,7 +1,10 @@
-#include "SceneTitle.h"
+﻿#include "SceneTitle.h"
 #include "DxLib.h"
 
-SceneTitle::SceneTitle()
+SceneTitle::SceneTitle() :
+	isFinished(false),
+	m_oldPad(0),
+	m_oldSpace(false)
 {
 }
 
@@ -11,7 +14,11 @@ SceneTitle::~SceneTitle()
 
 void SceneTitle::Init()
 {
-	isFinished = false; // ★追加！
+	isFinished = false;
+
+	// ★ 起動時や他画面からのボタン押しっぱなし持ち越しを防ぐ
+	m_oldPad = GetJoypadInputState(DX_INPUT_KEY_PAD1);
+	m_oldSpace = CheckHitKey(KEY_INPUT_SPACE) || CheckHitKey(KEY_INPUT_Z) || CheckHitKey(KEY_INPUT_RETURN);
 }
 
 void SceneTitle::End()
@@ -20,11 +27,20 @@ void SceneTitle::End()
 
 void SceneTitle::Update()
 {
-	int padInput = GetJoypadInputState(DX_INPUT_KEY_PAD1);
+	int currentPad = GetJoypadInputState(DX_INPUT_KEY_PAD1);
+	bool currentSpace = CheckHitKey(KEY_INPUT_SPACE) || CheckHitKey(KEY_INPUT_Z) || CheckHitKey(KEY_INPUT_RETURN);
 
-	if ((padInput & PAD_INPUT_1) || CheckHitKey(KEY_INPUT_SPACE))
+	// ★ 押した「瞬間」だけを検出（トリガー判定）
+	int pushPad = currentPad & ~m_oldPad;
+	bool pushSpace = currentSpace && !m_oldSpace;
+
+	m_oldPad = currentPad;
+	m_oldSpace = currentSpace;
+
+	// ボタン/キーが「新しく押された瞬間」だけ遷移
+	if ((pushPad & PAD_INPUT_1) || pushSpace)
 	{
-		isFinished = true; // 終了フラグを true に！
+		isFinished = true;
 	}
 }
 

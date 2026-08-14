@@ -1,4 +1,5 @@
 ﻿#pragma once
+
 #include "Vec2.h"
 
 class Map;
@@ -21,7 +22,7 @@ public:
 
 	void Init();
 	void End();
-	void Update();
+	void Update(const Map& map);
 	void Draw();
 
 	// グラフィックの設定
@@ -35,21 +36,25 @@ public:
 	Vec2 GetColCenter() const;
 	float GetColRadius() const;
 
-	// HPの取得
+	// ステータス取得
+	int GetLevel() const { return m_level; }
 	int GetHp() const { return m_hp; }
+	int GetMaxHp() const { return m_maxHp; }
 	int GetMp() const { return m_mp; }
-
-	// ダメージを受ける処理
-	void TakeDamage(int damage);
+	int GetMaxMp() const { return m_maxMp; }
+	int GetAttack() const { return m_attack; }
 
 	// 向きの取得
 	Direction GetDir() const { return m_dir; }
 
+	// 生存フラグ
 	bool IsDead() const;
 
-	void FullHeal();
-
-	void Update(const Map& map); // ← 引数に const Map& map を追加
+	// 更新：戦闘・回復用関数 
+	void TakeDamage(int damage);
+	bool ConsumeMp(int cost);  // MP消費（足りていれば true）
+	bool GainExp(int exp);     // 経験値獲得（レベルアップしたら true）
+	void FullHeal();           // HP/MP全回復
 
 private:
 	// 向き管理
@@ -65,28 +70,27 @@ private:
 	// 移動中かどうか
 	bool m_isMoving;
 
-	// 現在位置
+	// 現在位置・移動情報
 	Vec2 m_pos;
-	// 移動情報
 	Vec2 m_vec;
 
 	float m_angle;
 
-	int m_attack;
-
 	// 地面についているかどうか
 	bool m_isLanding;
 
-	// 残りHP
+	// ステータス変数
+	int m_level;        // レベル
+	int m_exp;          // 累積経験値
+	int m_nextLevelExp; // 次のレベルに必要な経験値
+
 	int m_hp;
-	// 残りMP
-	int m_mp;
-	// 最大HP
 	int m_maxHp;
-	// 最大MP
+	int m_mp;
 	int m_maxMp;
-	// 移動速度
+	int m_attack;
 	int m_Speed;
+
 	// 死亡フラグ
 	bool m_isDead;
 };

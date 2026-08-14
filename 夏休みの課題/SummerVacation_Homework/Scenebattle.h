@@ -1,38 +1,63 @@
 ﻿#pragma once
 
+#include "Player.h"
+
+class Player;
+
 class Scenebattle
 {
 public:
 	Scenebattle();
 	~Scenebattle();
 
-	void Init();
+	void Init(Player* pPlayer, bool isBoss = false);
 	void End();
 	void Update();
 	void Draw();
 
-	bool isFinished = false;
+	bool IsFinished() const { return isFinished; }
+	bool isFinished;
+
+	bool IsWin() const { return m_state == BattleState::Win; }
+	bool IsLose() const { return m_state == BattleState::Lose; }
 
 private:
-
-	// バトルの状態
 	enum class BattleState
 	{
-		Start,       // 戦闘開始
-		PlayerAttack,// プレイヤーの攻撃
-		EnemyAttack, // 敵の反撃
-		Win,         // 勝利
-		Lose         // 敗北
+		Start,
+		SelectCommand,
+		PlayerAttack,
+		PlayerMagic,
+		NoMp,
+		EnemyAttack,
+		Win,
+		Lose
 	};
 
 	BattleState m_state;
-	
-	// パラメータ（仮）
-	int m_playerHp;
-	int m_playerMaxHp;
+
+	int m_gainedMaxHp = 0;
+	int m_gainedMaxMp = 0;
+	int m_gainedAtk = 0;
+	bool m_isBoss = false;
+
+	// 敵関連
+	static constexpr int kEnemyAnimFrames = 6;
+	int m_enemyImgHandle[kEnemyAnimFrames];
+	int m_animTimer;
 	int m_enemyHp;
 	int m_enemyMaxHp;
+	int m_enemyAttack;
 
-	// ボタンのトリガー（押した瞬間だけ検知）用
+	// プレイヤー本体へのポインタ
+	Player* m_pPlayer;
+
+	// リザルト用
+	int m_gainedExp;
+	bool m_isLevelUp;
+
+	// 入力保持用
 	int m_oldPadInput;
+	bool m_oldSpaceInput;
+	int m_cursorIndex;
 };

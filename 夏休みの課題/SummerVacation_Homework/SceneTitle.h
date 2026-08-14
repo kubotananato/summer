@@ -1,4 +1,5 @@
 ﻿#pragma once
+
 class SceneTitle
 {
 public:
@@ -10,6 +11,10 @@ public:
 	void Update();
 	void Draw();
 
-	bool isFinished = false; // 画面終了フラグ
+	bool isFinished = false;
+
+private:
+	int m_oldPad = 0;       // 前フレームのパッド入力
+	bool m_oldSpace = false; // 前フレームのキーボード入力
 };
 

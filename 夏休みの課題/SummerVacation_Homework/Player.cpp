@@ -12,7 +12,7 @@ namespace
 	// 初期Status
 	constexpr int kDefaultHP = 100;
 	constexpr int kDefaultMP = 100;
-	constexpr int kDefaultAttack = 100;
+	constexpr int kDefaultAttack = 15;
 	constexpr int kSpeed = 4;
 
 	constexpr int kWalkAnimNum = 3;
@@ -29,7 +29,10 @@ Player::Player() :
 	m_animFrame(0),
 	m_isMoving(false),
 	m_angle(0.0f),
-	m_isLanding(0),
+	m_isLanding(false),
+	m_level(1),
+	m_exp(0),
+	m_nextLevelExp(30),
 	m_attack(0),
 	m_hp(0),
 	m_mp(0),
@@ -58,10 +61,17 @@ void Player::Init()
 	m_isMoving = false;
 	m_dir = Direction::Down; // 初期位置
 
-	m_hp = 10;
-	m_mp = 10;
+	// --- ★ステータスの初期化 ---
+	m_level = 1;
+	m_exp = 0;
+	m_nextLevelExp = 30; // 最初にレベル2に必要な経験値
+
 	m_maxHp = kDefaultHP;
+	m_hp = m_maxHp;
+
 	m_maxMp = kDefaultMP;
+	m_mp = m_maxMp;
+
 	m_attack = kDefaultAttack;
 	m_Speed = kSpeed;
 }
@@ -70,7 +80,7 @@ void Player::End()
 {
 }
 
-void Player::Update(const Map& map) // ← ★引数に const Map& map を追加
+void Player::Update(const Map& map)
 {
 	// コントローラー・キーボード入力でキャラクターを移動させる
 	if (!m_isDead)
@@ -117,7 +127,7 @@ void Player::Update(const Map& map) // ← ★引数に const Map& map を追加
 		}
 
 		// --------------------------------------------------
-		// ★ここから：壁判定付きの移動処理（元の m_pos += を置き換え）
+		// 壁判定付きの移動処理
 		// --------------------------------------------------
 
 		// X軸方向の移動チェック
@@ -125,13 +135,11 @@ void Player::Update(const Map& map) // ← ★引数に const Map& map を追加
 		{
 			float nextX = m_pos.x + m_vec.x * m_Speed;
 
-			// 移動後のプレイヤー四角形の左右上下のマス座標を計算
 			int leftTile = static_cast<int>(nextX) / CHIP_SIZE;
 			int rightTile = static_cast<int>(nextX + kWidth - 1) / CHIP_SIZE;
 			int topTile = static_cast<int>(m_pos.y) / CHIP_SIZE;
 			int bottomTile = static_cast<int>(m_pos.y + kHeight - 1) / CHIP_SIZE;
 
-			// 四隅のどこにも壁がなければX座標を更新
 			if (!map.IsWall(leftTile, topTile) &&
 				!map.IsWall(rightTile, topTile) &&
 				!map.IsWall(leftTile, bottomTile) &&
@@ -146,13 +154,11 @@ void Player::Update(const Map& map) // ← ★引数に const Map& map を追加
 		{
 			float nextY = m_pos.y + m_vec.y * m_Speed;
 
-			// 移動後のプレイヤー四角形の左右上下のマス座標を計算
 			int leftTile = static_cast<int>(m_pos.x) / CHIP_SIZE;
 			int rightTile = static_cast<int>(m_pos.x + kWidth - 1) / CHIP_SIZE;
 			int topTile = static_cast<int>(nextY) / CHIP_SIZE;
 			int bottomTile = static_cast<int>(nextY + kHeight - 1) / CHIP_SIZE;
 
-			// 四隅のどこにも壁がなければY座標を更新
 			if (!map.IsWall(leftTile, topTile) &&
 				!map.IsWall(rightTile, topTile) &&
 				!map.IsWall(leftTile, bottomTile) &&
@@ -161,7 +167,6 @@ void Player::Update(const Map& map) // ← ★引数に const Map& map を追加
 				m_pos.y = nextY;
 			}
 		}
-		// --------------------------------------------------
 	}
 
 	// 画面外判定
@@ -181,7 +186,6 @@ void Player::Draw()
 	}
 
 	int srcX = animNo * kWidth;
-
 	int srcY = static_cast<int>(m_dir) * kHeight;
 
 	DrawRectGraph(
@@ -215,7 +219,6 @@ void Player::TakeDamage(int damage)
 {
 	if (m_isDead) return;
 
-	// HPを減らす
 	m_hp -= damage;
 
 	if (m_hp <= 0)
@@ -225,6 +228,42 @@ void Player::TakeDamage(int damage)
 	}
 }
 
+// ★追加：MP消費処理
+bool Player::ConsumeMp(int cost)
+{
+	if (m_mp >= cost)
+	{
+		m_mp -= cost;
+		return true; // 消費成功
+	}
+	return false; // MP不足
+}
+
+// ★追加：経験値獲得＆レベルアップ処理
+bool Player::GainExp(int exp)
+{
+	m_exp += exp;
+
+	// 必要経験値に達したらレベルアップ
+	if (m_exp >= m_nextLevelExp)
+	{
+		m_level++;
+		m_nextLevelExp += m_level * 30; // 次の必要経験値を上昇
+
+		// ステータス上昇
+		m_attack += 5;
+		m_maxHp += 20;
+		m_maxMp += 10;
+
+		// 全回復
+		FullHeal();
+
+		return true; // レベルアップした！
+	}
+
+	return false; // レベルアップはしなかった
+}
+
 bool Player::IsDead() const
 {
 	return m_hp <= 0;
@@ -232,7 +271,8 @@ bool Player::IsDead() const
 
 void Player::FullHeal()
 {
-	// HPとMPを最大値（初期値）まで回復
+	// HPとMPを最大値まで回復
 	m_hp = m_maxHp;
-	m_mp = m_maxMp; 
+	m_mp = m_maxMp;
+	m_isDead = false;
 }

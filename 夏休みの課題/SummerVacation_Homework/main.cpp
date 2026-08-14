@@ -2,15 +2,19 @@
 #include "Game.h"
 #include "SceneMain.h"
 #include "SceneTitle.h"
-#include "SceneBattle.h"
+#include "Scenebattle.h" // 小文字の b に統一
+#include "SceneClear.h"
+#include "SceneGameOver.h"
 
 enum class Scene
 {
 	Title, // タイトル画面
-	Main, // ステージ画面
-	Battle // バトル画面
+	Main,  // ステージ画面
+	Battle, // バトル画面
+	BossBattle, // ボス戦
+	Clear,      // クリア画面
+	GameOver    // ゲームオーバー画面
 };
-
 
 // プログラムは WinMain から始まります
 int WINAPI WinMain( _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nCmdShow )
@@ -32,11 +36,13 @@ int WINAPI WinMain( _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 	SceneTitle scenetitle;
 	SceneMain scenemain;
 	Scenebattle scenebattle;
+	SceneClear sceneclear;
+	SceneGameOver scenegameover;
 	
 	Scene currentScene = Scene::Title;
 	scenetitle.Init();
 
-	while (ProcessMessage() == 0)
+	while (ProcessMessage() == 0 && ClearDrawScreen() == 0)
 	{
 		// 現在のフレーム開始時間時刻を取得
 		LONGLONG start = GetNowHiPerformanceCount();
@@ -45,52 +51,103 @@ int WINAPI WinMain( _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 		ClearDrawScreen();
 
 		// ゲームの処理
-
 		switch (currentScene)
 		{
+			// ★ ここを追加！
 		case Scene::Title:
 			scenetitle.Update();
+			scenetitle.Draw();
+
 			if (scenetitle.isFinished)
 			{
-				scenetitle.End();
-				scenemain.Init();
+				scenemain.Init(); // メイン画面の初期化
 				currentScene = Scene::Main;
-			}
-			else // ★ else を追加（遷移したフレームは描画しない）
-			{
-				scenetitle.Draw();
 			}
 			break;
 
 		case Scene::Main:
 			scenemain.Update();
+			scenemain.Draw();
+
+			// ① 通常エンカウント時の遷移
 			if (scenemain.isFinished)
 			{
-				scenemain.End();
-				scenebattle.Init();
+				scenemain.ResetFinished();
+				scenebattle.Init(scenemain.GetPlayer(), false); // 通常戦
 				currentScene = Scene::Battle;
 			}
-			else // ★ else を追加
+			// ② 階段に触れてボス戦への遷移
+			else if (scenemain.isGoToBoss)
 			{
-				scenemain.Draw();
+				scenemain.isGoToBoss = false;
+				scenebattle.Init(scenemain.GetPlayer(), true); // ボス戦！
+				currentScene = Scene::BossBattle;
 			}
 			break;
 
-		case Scene::Battle:
+		case Scene::Battle: // 通常バトル
 			scenebattle.Update();
+			scenebattle.Draw();
+
 			if (scenebattle.isFinished)
 			{
-				scenebattle.End();
-				scenemain.Init(); // バトルが終わったらメイン画面に戻る
-				currentScene = Scene::Main;
-			}
-			else // ★ else を追加
-			{
-				scenebattle.Draw();
+				if (scenebattle.IsLose())
+				{
+					// 敗北したらゲームオーバーへ
+					scenegameover.Init();
+					currentScene = Scene::GameOver;
+				}
+				else
+				{
+					// 勝利・逃走時はメインマップへ戻る
+					currentScene = Scene::Main;
+				}
 			}
 			break;
-		} 
 
+		case Scene::BossBattle: // ボスバトル
+			scenebattle.Update();
+			scenebattle.Draw();
+
+			if (scenebattle.isFinished)
+			{
+				if (scenebattle.IsWin())
+				{
+					// ボス撃破でゲームクリア！
+					sceneclear.Init();
+					currentScene = Scene::Clear;
+				}
+				else if (scenebattle.IsLose())
+				{
+					// 敗北したらゲームオーバー
+					scenegameover.Init();
+					currentScene = Scene::GameOver;
+				}
+			}
+			break;
+
+		case Scene::Clear: // クリア画面
+			sceneclear.Update();
+			sceneclear.Draw();
+
+			if (sceneclear.isFinished)
+			{
+				scenetitle.Init(); // ★ タイトル画面を初期化して戻る
+				currentScene = Scene::Title;
+			}
+			break;
+
+		case Scene::GameOver: // ゲームオーバー画面
+			scenegameover.Update();
+			scenegameover.Draw();
+
+			if (scenegameover.isFinished)
+			{
+				scenetitle.Init(); // ★ タイトル画面を初期化して戻る
+				currentScene = Scene::Title;
+			}
+			break;
+		}
 
 		// 画面の書き換え
 		ScreenFlip();
@@ -103,7 +160,6 @@ int WINAPI WinMain( _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 		{
 			Sleep(1);
 		}
-
 	}
 
 	scenetitle.End();

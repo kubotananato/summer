@@ -25,7 +25,7 @@ public:
 	Vec2 GetColCenter() const;
 	float GetColRadius() const;
 
-
+	void SetPos(const Vec2& pos) { m_pos = pos; }
 
 	// 登場回数をしゅとくする
 //	int GetApperCount() const { return m_apperCount; }
