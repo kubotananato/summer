@@ -1,4 +1,4 @@
-#include "SceneClear.h"
+﻿#include "SceneClear.h"
 #include "DxLib.h"
 
 SceneClear::SceneClear() :

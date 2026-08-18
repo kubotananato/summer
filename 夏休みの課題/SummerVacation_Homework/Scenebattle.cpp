@@ -15,6 +15,27 @@ namespace
 	const unsigned int kColorYellow = GetColor(255, 255, 0);
 
 	constexpr int kCommandCount = 3;
+
+	// ドラクエ風ウィンドウを描画する共通関数
+	void DrawDQWindow(int x1, int y1, int x2, int y2)
+	{
+		// 背景の黒塗り
+		DrawBox(x1, y1, x2, y2, kColorBlack, TRUE);
+
+		// 外枠・内枠
+		DrawBox(x1, y1, x2, y2, kColorWhite, FALSE);
+		DrawBox(x1 + 3, y1 + 3, x2 - 3, y2 - 3, kColorWhite, FALSE);
+
+		DrawPixel(x1, y1, kColorBlack);
+		DrawPixel(x2, y1, kColorBlack);
+		DrawPixel(x1, y2, kColorBlack);
+		DrawPixel(x2, y2, kColorBlack);
+
+		DrawPixel(x1 + 3, y1 + 3, kColorBlack);
+		DrawPixel(x2 + 3, y1 + 3, kColorBlack);
+		DrawPixel(x1 + 3, y2 - 3, kColorBlack);
+		DrawPixel(x2 + 3, y2 - 3, kColorBlack);
+	}
 }
 
 Scenebattle::Scenebattle() :
@@ -29,7 +50,11 @@ Scenebattle::Scenebattle() :
 	m_animTimer(0),
 	m_pPlayer(nullptr),
 	m_gainedExp(0),
-	m_isLevelUp(false)
+	m_isLevelUp(false),
+	m_lastDamageToEnemy(0),
+	m_lastDamageToPlayer(0),
+	m_enemyPopup(),
+	m_playerPopup()
 {
 	for (int i = 0; i < kEnemyAnimFrames; i++)
 	{
@@ -62,7 +87,6 @@ void Scenebattle::Init(Player* pPlayer, bool isBoss)
 		m_gainedExp = 45;       // 通常モンスターの経験値
 	}
 
-	// ★ 修正：現在のHPを最大HPでリセット
 	m_enemyHp = m_enemyMaxHp;
 
 	m_cursorIndex = 0;
@@ -100,7 +124,22 @@ void Scenebattle::Update()
 
 	m_animTimer++;
 
-	// 入力判定（押しっぱなし防止のトリガー処理）
+	// ダメージポップアップの更新処理
+	if (m_enemyPopup.active)
+	{
+		m_enemyPopup.timer--;
+		m_enemyPopup.y -= 0.8f;
+		if (m_enemyPopup.timer <= 0) m_enemyPopup.active = false;
+	}
+
+	if (m_playerPopup.active)
+	{
+		m_playerPopup.timer--;
+		m_playerPopup.y -= 0.8f;
+		if (m_playerPopup.timer <= 0) m_playerPopup.active = false;
+	}
+
+	// 入力判定（トリガー処理）
 	int currentPadInput = GetJoypadInputState(DX_INPUT_KEY_PAD1);
 	int pushPad = currentPadInput & ~m_oldPadInput;
 	m_oldPadInput = currentPadInput;
@@ -140,14 +179,22 @@ void Scenebattle::Update()
 			if (m_cursorIndex == 0) // こうげき
 			{
 				m_state = BattleState::PlayerAttack;
-				m_enemyHp -= (m_pPlayer->GetAttack() + 5);
+				m_lastDamageToEnemy = CalculateDamage(m_pPlayer->GetAttack() + 5, 0.2f);
+				m_enemyHp -= m_lastDamageToEnemy;
+
+				int enemyCenterX = (150 + Game::kScreenWidth - 30) / 2;
+				SpawnDamagePopup(m_enemyPopup, m_lastDamageToEnemy, static_cast<float>(enemyCenterX - 10), 100.0f);
 			}
 			else if (m_cursorIndex == 1) // じゅもん
 			{
 				if (m_pPlayer->ConsumeMp(10))
 				{
 					m_state = BattleState::PlayerMagic;
-					m_enemyHp -= (m_pPlayer->GetAttack() * 2);
+					m_lastDamageToEnemy = CalculateDamage(m_pPlayer->GetAttack() * 2, 0.15f);
+					m_enemyHp -= m_lastDamageToEnemy;
+
+					int enemyCenterX = (150 + Game::kScreenWidth - 30) / 2;
+					SpawnDamagePopup(m_enemyPopup, m_lastDamageToEnemy, static_cast<float>(enemyCenterX - 10), 100);
 				}
 				else
 				{
@@ -169,7 +216,6 @@ void Scenebattle::Update()
 				int oldMaxMp = m_pPlayer->GetMaxMp();
 				int oldAtk = m_pPlayer->GetAttack();
 
-				// Initで設定された m_gainedExp をそのまま使用
 				m_isLevelUp = m_pPlayer->GainExp(m_gainedExp);
 
 				if (m_isLevelUp)
@@ -189,7 +235,12 @@ void Scenebattle::Update()
 		case BattleState::PlayerMagic:
 			m_state = BattleState::EnemyAttack;
 
-			m_pPlayer->TakeDamage(m_enemyAttack);
+			// ランダムダメージの計算
+			m_lastDamageToPlayer = CalculateDamage(m_enemyAttack, 0.2f);
+			m_pPlayer->TakeDamage(m_lastDamageToPlayer);
+
+			SpawnDamagePopup(m_playerPopup, m_lastDamageToPlayer, 80, 50);
+
 			if (m_pPlayer->IsDead())
 			{
 				m_state = BattleState::Lose;
@@ -210,126 +261,148 @@ void Scenebattle::Update()
 
 void Scenebattle::Draw()
 {
+	// 背景の暗転表示
 	DrawBox(0, 0, Game::kScreenWidth, Game::kScreenHeight, GetColor(15, 15, 25), TRUE);
 
-	// 敵表示位置
-	int enemyCenterX = Game::kScreenWidth / 2;
-	int enemyCenterY = 220;
+	// ステータスウィンドウ
+	int statusX1 = 30;
+	int statusY1 = 20;
+	int statusX2 = 140;
+	int statusY2 = 135;
+
+	DrawDQWindow(statusX1, statusY1, statusX2, statusY2);
+
+	if (m_pPlayer != nullptr)
+	{
+		DrawString(statusX1 + 15, statusY1 + 12, "ゆうしゃ", kColorWhite);
+		DrawFormatString(statusX1 + 15, statusY1 + 36, kColorWhite, "H %3d", m_pPlayer->GetHp());
+		DrawFormatString(statusX1 + 15, statusY1 + 58, kColorWhite, "M %3d", m_pPlayer->GetMp());
+		DrawFormatString(statusX1 + 15, statusY1 + 80, kColorWhite, "Lv %2d", m_pPlayer->GetLevel());
+	}
+
+	// 戦闘画面枠
+	int viewX1 = 150;
+	int viewY1 = 20;
+	int viewX2 = Game::kScreenWidth - 30;
+	int viewY2 = 320;
+
+	// 外側の白い太枠 背景塗り
+	DrawBox(viewX1, viewY1, viewX2, viewY2, kColorWhite, TRUE);
+	DrawBox(viewX1 + 3, viewY1 + 3, viewX2 - 3, viewY2 - 3, GetColor(10, 15, 30), TRUE);
+
+	// 敵表示
+	int enemyCenterX = (viewX1 + viewX2) / 2;
+	int enemyCenterY = (viewY1 + viewY2) / 2 - 15;
 
 	if (m_enemyHp > 0)
 	{
 		if (m_isBoss)
 		{
-			// ボス：大きめの赤丸を描画（半径90）
-			DrawCircle(enemyCenterX, enemyCenterY, 90, kColorRed, TRUE);
+			DrawCircle(enemyCenterX, enemyCenterY, 80, kColorRed, TRUE);
 		}
 		else
 		{
-			// 通常モンスター：画像があれば表示、なければ赤丸（半径50）
 			if (m_enemyImgHandle[0] != -1)
 			{
 				int currentFrame = (m_animTimer / 10) % kEnemyAnimFrames;
-				DrawRotaGraph(enemyCenterX, enemyCenterY, 3.0, 0.0, m_enemyImgHandle[currentFrame], TRUE);
+				DrawRotaGraph(enemyCenterX, enemyCenterY, 3.5, 0.0, m_enemyImgHandle[currentFrame], TRUE);
 			}
 			else
 			{
-				DrawCircle(enemyCenterX, enemyCenterY, 50, kColorRed, TRUE);
+				DrawCircle(enemyCenterX, enemyCenterY, 45, kColorRed, TRUE);
 			}
+		}
+
+		// 敵HPバー
+		int barWidth = 160;
+		int barHeight = 10;
+		int barX = enemyCenterX - (barWidth / 2);
+		int barY = viewY2 - 25;
+
+		DrawBox(barX, barY, barX + barWidth, barY + barHeight, kColorGray, TRUE);
+		int currentEnemyBarWidth = (barWidth * m_enemyHp) / m_enemyMaxHp;
+		DrawBox(barX, barY, barX + currentEnemyBarWidth, barY + barHeight, kColorRed, TRUE);
+	}
+
+	// コマンドウィンドウ
+	int cmdX1 = 30;
+	int cmdY1 = 335;
+	int cmdX2 = 180;
+	int cmdY2 = Game::kScreenHeight - 20;
+
+	DrawDQWindow(cmdX1, cmdY1, cmdX2, cmdY2);
+
+	DrawString(cmdX1 + 15, cmdY1 + 12, "ゆうしゃ", kColorWhite);
+	DrawLine(cmdX1 + 8, cmdY1 + 32, cmdX2 - 8, cmdY1 + 32, kColorWhite);
+
+	const char* commands[] = { "こうげき", "じゅもん", "にげる" };
+	for (int i = 0; i < kCommandCount; i++)
+	{
+		int itemY = cmdY1 + 42 + (i * 26);
+
+		if (m_state == BattleState::SelectCommand && i == m_cursorIndex)
+		{
+			DrawString(cmdX1 + 12, itemY, ">", kColorYellow);
+			DrawString(cmdX1 + 30, itemY, commands[i], kColorYellow);
+		}
+		else
+		{
+			DrawString(cmdX1 + 30, itemY, commands[i], kColorWhite);
 		}
 	}
 
-	// 敵HPバー
-	int barWidth = 200;
-	int barHeight = 15;
-	int barX = enemyCenterX - (barWidth / 2);
-	int barY = enemyCenterY + 110;
-	DrawBox(barX, barY, barX + barWidth, barY + barHeight, kColorGray, TRUE);
-	int currentEnemyBarWidth = (barWidth * m_enemyHp) / m_enemyMaxHp;
-	DrawBox(barX, barY, barX + currentEnemyBarWidth, barY + barHeight, kColorRed, TRUE);
-	DrawFormatString(barX + 25, barY - 20, kColorWhite, "敵 HP: %d / %d", m_enemyHp, m_enemyMaxHp);
-
-	// プレイヤーUI
-	int pBarX = 80;
-	int pBarY = 430;
-
-	if (m_pPlayer != nullptr)
+	// ダメージポップアップの描画
+	if (m_enemyPopup.active)
 	{
-		DrawFormatString(pBarX, pBarY - 25, kColorYellow, "Lv.%d  (攻撃力:%d)",
-			m_pPlayer->GetLevel(), m_pPlayer->GetAttack());
-
-		DrawFormatString(pBarX, pBarY, kColorWhite, "HP: %d / %d", m_pPlayer->GetHp(), m_pPlayer->GetMaxHp());
-		DrawBox(pBarX, pBarY + 20, pBarX + 200, pBarY + 30, kColorGray, TRUE);
-		int pHpWidth = (200 * m_pPlayer->GetHp()) / m_pPlayer->GetMaxHp();
-		DrawBox(pBarX, pBarY + 20, pBarX + pHpWidth, pBarY + 30, kColorGreen, TRUE);
-
-		DrawFormatString(pBarX, pBarY + 40, kColorWhite, "MP: %d / %d", m_pPlayer->GetMp(), m_pPlayer->GetMaxMp());
-		DrawBox(pBarX, pBarY + 60, pBarX + 200, pBarY + 70, kColorGray, TRUE);
-		int pMpWidth = (m_pPlayer->GetMaxMp() > 0) ? (200 * m_pPlayer->GetMp()) / m_pPlayer->GetMaxMp() : 0;
-		DrawBox(pBarX, pBarY + 60, pBarX + pMpWidth, pBarY + 70, kColorBlue, TRUE);
+		DrawFormatString(static_cast<int>(m_enemyPopup.x), static_cast<int>(m_enemyPopup.y), kColorYellow, "%d", m_enemyPopup.damage);
 	}
 
-	// メッセージウィンドウ & コマンドウィンドウ
-	int winX1 = 50;
-	int winY1 = 530;
-	int winX2 = Game::kScreenWidth - 50;
-	int winY2 = Game::kScreenHeight - 30;
+	if (m_playerPopup.active)
+	{
+		DrawFormatString(static_cast<int>(m_playerPopup.x), static_cast<int>(m_playerPopup.y), kColorRed, "%d", m_playerPopup.damage);
+	}
 
-	DrawBox(winX1, winY1, winX2, winY2, kColorBlack, TRUE);
-	DrawBox(winX1, winY1, winX2, winY2, kColorWhite, FALSE);
+	// メッセージ / 敵情報ウィンドウ
+	int msgX1 = 190;
+	int msgY1 = 335;
+	int msgX2 = Game::kScreenWidth - 30;
+	int msgY2 = Game::kScreenHeight - 20;
 
-	int textX = winX1 + 30;
-	int textY = winY1 + 25;
+	DrawDQWindow(msgX1, msgY1, msgX2, msgY2);
+
+	int textX = msgX1 + 20;
+	int textY = msgY1 + 18;
 
 	if (m_state == BattleState::SelectCommand)
 	{
-		DrawString(textX, textY, "どうする？", kColorWhite);
-
-		int cmdX1 = Game::kScreenWidth - 250;
-		int cmdY1 = winY1;
-		int cmdX2 = winX2;
-		int cmdY2 = winY2;
-
-		DrawBox(cmdX1, cmdY1, cmdX2, cmdY2, kColorBlack, TRUE);
-		DrawBox(cmdX1, cmdY1, cmdX2, cmdY2, kColorWhite, FALSE);
-
-		const char* commands[] = { "こうげき", "じゅもん(MP10)", "にげる" };
-		for (int i = 0; i < kCommandCount; i++)
-		{
-			int itemY = cmdY1 + 15 + (i * 28);
-
-			if (i == m_cursorIndex)
-			{
-				DrawString(cmdX1 + 15, itemY, "＞", kColorYellow);
-				DrawString(cmdX1 + 35, itemY, commands[i], kColorYellow);
-			}
-			else
-			{
-				DrawString(cmdX1 + 35, itemY, commands[i], kColorWhite);
-			}
-		}
+		// コマンド選択時：出現中の敵の名前と匹数を表示
+		const char* enemyName = m_isBoss ? "ボスモンスター" : "モンスター";
+		DrawString(textX, textY, enemyName, kColorWhite);
+		DrawString(textX + 200, textY, "1匹", kColorWhite);
 	}
 	else
 	{
+		// 戦闘中のテキストメッセージ表示
 		switch (m_state)
 		{
 		case BattleState::Start:
 			if (m_isBoss)
 				DrawString(textX, textY, "ボスが現れた！", kColorWhite);
 			else
-				DrawString(textX, textY, "野生のモンスターが現れた！", kColorWhite);
+				DrawString(textX, textY, "モンスターが現れた！", kColorWhite);
 			break;
 
 		case BattleState::PlayerAttack:
 			if (m_pPlayer != nullptr)
 			{
-				DrawFormatString(textX, textY, kColorWhite, "プレイヤーのこうげき！ モンスターに %d のダメージ！", m_pPlayer->GetAttack() + 5);
+				DrawFormatString(textX, textY, kColorWhite, "プレイヤーのこうげき！\n\nモンスターに %d のダメージ！", m_lastDamageToEnemy);
 			}
 			break;
 
 		case BattleState::PlayerMagic:
 			if (m_pPlayer != nullptr)
 			{
-				DrawFormatString(textX, textY, kColorWhite, "プレイヤーは呪文を唱えた！ モンスターに %d のダメージ！", m_pPlayer->GetAttack() * 2);
+				DrawFormatString(textX, textY, kColorWhite, "プレイヤーは じゅもんを唱えた！\n\nモンスターに %d のダメージ！", m_lastDamageToEnemy);
 			}
 			break;
 
@@ -338,19 +411,16 @@ void Scenebattle::Draw()
 			break;
 
 		case BattleState::EnemyAttack:
-			DrawFormatString(textX, textY, kColorWhite, "モンスターの反撃！ %d のダメージを受けた！", m_enemyAttack);
+			DrawFormatString(textX, textY, kColorWhite, "モンスターの反撃！\n\n%d のダメージを受けた！", m_lastDamageToPlayer);
 			break;
 
 		case BattleState::Win:
-			DrawFormatString(textX, textY, GetColor(100, 255, 100), "モンスターを倒した！ %d の経験値を獲得！", m_gainedExp);
+			DrawFormatString(textX, textY, GetColor(100, 255, 100), "モンスターを倒した！\n%d の経験値を獲得！", m_gainedExp);
 
 			if (m_isLevelUp && m_pPlayer != nullptr)
 			{
-				DrawFormatString(textX, textY + 28, kColorYellow,
-					"★ レベルがあがった！ (Lv.%d)", m_pPlayer->GetLevel());
-
-				DrawFormatString(textX, textY + 56, kColorYellow,
-					"   最大HP+%d  最大MP+%d  攻撃力+%d", m_gainedMaxHp, m_gainedMaxMp, m_gainedAtk);
+				DrawFormatString(textX, textY + 42, kColorYellow, "★ レベルがあがった！ (Lv.%d)", m_pPlayer->GetLevel());
+				DrawFormatString(textX, textY + 64, kColorYellow, "   HP+%d  MP+%d  攻撃力+%d", m_gainedMaxHp, m_gainedMaxMp, m_gainedAtk);
 			}
 			break;
 
@@ -359,6 +429,29 @@ void Scenebattle::Draw()
 			break;
 		}
 
-		DrawString(textX, winY2 - 30, "[ ボタン / SPACE ] つぎへ", GetColor(200, 200, 200));
+		// 進行案内テキスト
+		DrawString(textX, msgY2 - 25, "[ SPACE / BUTTON ] つぎへ", GetColor(180, 180, 180));
 	}
+}
+
+// ダメージのランダム化
+int Scenebattle::CalculateDamage(int baseDamage, float variance)
+{
+	int minDmg = static_cast<int>(baseDamage * (1.0f - variance));
+	int maxDmg = static_cast<int>(baseDamage * (1.0f + variance));
+
+	if (minDmg < 1) minDmg = 1;
+	if (maxDmg < minDmg) maxDmg = minDmg;
+
+	return minDmg + GetRand(maxDmg - minDmg);
+}
+
+// ダメージテキストの生成
+void Scenebattle::SpawnDamagePopup(DamagePopup& popup, int damage, float x, float y)
+{
+	popup.damage = damage;
+	popup.x = x;
+	popup.y = y;
+	popup.timer = 40; // 40フレーム（約0.6秒）表示
+	popup.active = true;
 }

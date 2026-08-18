@@ -24,8 +24,8 @@ Map::~Map()
 
 void Map::Init()
 {
-	// 画像ファイルを読み込む（※実際の画像パスに合わせて変更してください）
-	m_floorHandle = LoadGraph("data/HealPoint/Map/floor.png");
+	// 画像ファイルを読み込む
+	m_floorHandle = LoadGraph("data/Bg/floor.png");
 	m_wallHandle = LoadGraph("data/HealPoint/Map/wall.png");
 
 	// 読み込みチェック
@@ -122,20 +122,22 @@ void Map::Draw()
 			int drawX2 = drawX1 + CHIP_SIZE;
 			int drawY2 = drawY1 + CHIP_SIZE;
 
+			// Draw() 内の修正例
+
 			if (m_mapData[y][x] == 1)
 			{
-				// 描画輝度を下げて壁を少し暗く・重厚にする（RGB: 180, 180, 180）
 				SetDrawMode(DX_DRAWMODE_NEAREST);
 				SetDrawBright(180, 180, 180);
-				DrawExtendGraph(drawX1, drawY1, drawX2, drawY2, m_wallHandle, TRUE);
-				SetDrawBright(255, 255, 255); // 輝度を元に戻す
+				// 右と下を +1px（必要なら +2px）大きくして重ねる
+				DrawExtendGraph(drawX1, drawY1, drawX2 + 1, drawY2 + 1, m_wallHandle, TRUE);
+				SetDrawBright(255, 255, 255);
 				SetDrawMode(DX_DRAWMODE_BILINEAR);
 			}
 			else
 			{
-				// 0 のときは床を描画（通常描画）
 				SetDrawMode(DX_DRAWMODE_NEAREST);
-				DrawExtendGraph(drawX1, drawY1, drawX2, drawY2, m_floorHandle, TRUE);
+				// 右と下を +1px（必要なら +2px）大きくして重ねる
+				DrawExtendGraph(drawX1, drawY1, drawX2 + 1, drawY2 + 1, m_floorHandle, TRUE);
 				SetDrawMode(DX_DRAWMODE_BILINEAR);
 			}
 		}

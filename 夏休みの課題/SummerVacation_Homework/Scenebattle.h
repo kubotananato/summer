@@ -60,4 +60,24 @@ private:
 	int m_oldPadInput;
 	bool m_oldSpaceInput;
 	int m_cursorIndex;
+
+	// ダメージ値の保持用
+	int m_lastDamageToEnemy;
+	int m_lastDamageToPlayer;
+
+private:
+	struct DamagePopup
+	{
+		int damage = 0;
+		float x = 0.0f;
+		float y = 0.0f;
+		int timer = 0;
+		bool active = false;
+	};
+	DamagePopup m_enemyPopup;
+	DamagePopup m_playerPopup;
+
+	int CalculateDamage(int baseDamage, float cariance = 0.2f);
+	void SpawnDamagePopup(DamagePopup& popup, int damage, float x, float y);
+
 };
