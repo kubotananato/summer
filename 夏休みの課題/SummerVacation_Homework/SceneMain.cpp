@@ -93,9 +93,7 @@ void SceneMain::Update()
 	m_bg.Update();
 	m_healpoint.Update(m_player);
 
-	// ----------------------------------------------------
 	// 敵3体の更新 & プレイヤーとの当たり判定
-	// ----------------------------------------------------
 	m_isHit = false;
 
 	for (int i = 0; i < kMaxEnemies; i++)
@@ -120,9 +118,7 @@ void SceneMain::Update()
 	}
 	m_wasHit = m_isHit;
 
-	// ----------------------------------------------------
 	// 回復ポイントとの当たり判定
-	// ----------------------------------------------------
 	{
 		Vec2 diff = m_player.GetColCenter() - m_healpoint.GetColCenter();
 		float radiusSum = m_player.GetColRadius() + m_healpoint.GetColRadius();
@@ -130,9 +126,7 @@ void SceneMain::Update()
 		m_isHealHit = (diff.SqLength() <= radiusSum * radiusSum);
 	}
 
-	// ----------------------------------------------------
 	// 階段（ボス）への到達判定
-	// ----------------------------------------------------
 	int playerTileX = static_cast<int>((m_player.GetColCenter().x) / CHIP_SIZE);
 	int playerTileY = static_cast<int>((m_player.GetColCenter().y) / CHIP_SIZE);
 
@@ -153,7 +147,7 @@ void SceneMain::Draw()
 	m_map.Draw();
 	m_bg.Draw();
 
-	// ★ 敵3体をすべて描画
+	// 敵3体をすべて描画
 	for (int i = 0; i < kMaxEnemies; i++)
 	{
 		m_enemies[i].Draw();

@@ -63,7 +63,6 @@ void Map::LoadCSV(const char* filePath)
 
 	while (std::getline(file, line) && y < MAP_HEIGHT)
 	{
-		// 【対策】ファイルの先頭(1行目)にあるBOM(隠し文字)を除去する
 		if (y == 0 && line.size() >= 3)
 		{
 			if (static_cast<unsigned char>(line[0]) == 0xEF &&
@@ -74,7 +73,6 @@ void Map::LoadCSV(const char* filePath)
 			}
 		}
 
-		// Windowsの改行コード(\r)が含まれている場合は取り除く
 		if (!line.empty() && line.back() == '\r')
 		{
 			line.pop_back();
@@ -127,14 +125,18 @@ void Map::Draw()
 			if (m_mapData[y][x] == 1)
 			{
 				// 描画輝度を下げて壁を少し暗く・重厚にする（RGB: 180, 180, 180）
+				SetDrawMode(DX_DRAWMODE_NEAREST);
 				SetDrawBright(180, 180, 180);
 				DrawExtendGraph(drawX1, drawY1, drawX2, drawY2, m_wallHandle, TRUE);
 				SetDrawBright(255, 255, 255); // 輝度を元に戻す
+				SetDrawMode(DX_DRAWMODE_BILINEAR);
 			}
 			else
 			{
 				// 0 のときは床を描画（通常描画）
+				SetDrawMode(DX_DRAWMODE_NEAREST);
 				DrawExtendGraph(drawX1, drawY1, drawX2, drawY2, m_floorHandle, TRUE);
+				SetDrawMode(DX_DRAWMODE_BILINEAR);
 			}
 		}
 	}
