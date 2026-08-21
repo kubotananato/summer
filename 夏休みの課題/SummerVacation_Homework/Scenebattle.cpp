@@ -41,6 +41,7 @@ namespace
 Scenebattle::Scenebattle() :
 	isFinished(false),
 	m_state(BattleState::Start),
+	m_bgImgHandle(-1), // ★追加
 	m_enemyHp(50),
 	m_enemyMaxHp(50),
 	m_enemyAttack(10),
@@ -100,6 +101,12 @@ void Scenebattle::Init(Player* pPlayer, bool isBoss)
 	m_oldPadInput = GetJoypadInputState(DX_INPUT_KEY_PAD1);
 	m_oldSpaceInput = (CheckHitKey(KEY_INPUT_SPACE) == 1);
 
+	// 戦闘用背景画像の読み込み
+	if (m_bgImgHandle == -1)
+	{
+		m_bgImgHandle = LoadGraph("data/Bg/floor.png");
+	}
+
 	if (m_enemyImgHandle[0] == -1)
 	{
 		LoadDivGraph("data/Enemy/EIdle.png", 6, 6, 1, 32, 32, m_enemyImgHandle);
@@ -108,6 +115,13 @@ void Scenebattle::Init(Player* pPlayer, bool isBoss)
 
 void Scenebattle::End()
 {
+	// 背景画像のメモリ解放
+	if (m_bgImgHandle != -1)
+	{
+		DeleteGraph(m_bgImgHandle);
+		m_bgImgHandle = -1;
+	}
+
 	for (int i = 0; i < kEnemyAnimFrames; i++)
 	{
 		if (m_enemyImgHandle[i] != -1)
@@ -261,7 +275,7 @@ void Scenebattle::Update()
 
 void Scenebattle::Draw()
 {
-	// 背景の暗転表示
+	// 全体の背景暗転
 	DrawBox(0, 0, Game::kScreenWidth, Game::kScreenHeight, GetColor(15, 15, 25), TRUE);
 
 	// ステータスウィンドウ
@@ -286,9 +300,18 @@ void Scenebattle::Draw()
 	int viewX2 = Game::kScreenWidth - 30;
 	int viewY2 = 320;
 
-	// 外側の白い太枠 背景塗り
+	// 外側の白い太枠
 	DrawBox(viewX1, viewY1, viewX2, viewY2, kColorWhite, TRUE);
-	DrawBox(viewX1 + 3, viewY1 + 3, viewX2 - 3, viewY2 - 3, GetColor(10, 15, 30), TRUE);
+
+	// 戦闘枠内の背景描画
+	if (m_bgImgHandle != -1)
+	{
+		DrawExtendGraph(viewX1 + 3, viewY1 + 3, viewX2 - 3, viewY2 - 3, m_bgImgHandle, FALSE);
+	}
+	else
+	{
+		DrawBox(viewX1 + 3, viewY1 + 3, viewX2 - 3, viewY2 - 3, GetColor(10, 15, 30), TRUE);
+	}
 
 	// 敵表示
 	int enemyCenterX = (viewX1 + viewX2) / 2;

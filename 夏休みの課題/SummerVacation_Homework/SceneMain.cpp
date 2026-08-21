@@ -1,4 +1,5 @@
 ﻿#include "SceneMain.h"
+#include "Game.h"
 #include "DxLib.h"
 #include <cstdlib>
 
@@ -98,7 +99,8 @@ void SceneMain::Update()
 
 	for (int i = 0; i < kMaxEnemies; i++)
 	{
-		m_enemies[i].Update();
+		// プレイヤーの位置を渡すように修正
+		m_enemies[i].Update(m_player.GetPos());
 
 		// プレイヤーと各敵との距離判定
 		Vec2 diff = m_player.GetColCenter() - m_enemies[i].GetColCenter();
@@ -184,22 +186,52 @@ void SceneMain::ResetFinished()
 
 void SceneMain::RespawnEnemy()
 {
-	// 敵3体それぞれに対して安全な（壁でない）配置場所を探して設定する
+	// 画面内のタイル数（例: 画面解像度 640x480 / タイルサイズ 32px の場合）
+	// ※ご自身の画面サイズとCHIP_SIZEに合わせて数値を調整してください
+	constexpr int kMaxTileX = Game::kScreenWidth / CHIP_SIZE;  // 例: 20
+	constexpr int kMaxTileY = Game::kScreenHeight / CHIP_SIZE; // 例: 15
+
 	for (int i = 0; i < kMaxEnemies; i++)
 	{
-		while (true)
+		int attempts = 0; // 無限ループ防止用のカウンター
+		while (attempts < 100)
 		{
-			int tileX = std::rand() % 32;
-			int tileY = std::rand() % 18;
+			attempts++;
 
-			// 壁判定をチェック
-			if (!m_map.IsWall(tileX, tileY))
+			int tileX = std::rand() % kMaxTileX;
+			int tileY = std::rand() % kMaxTileY;
+
+			// 1. 壁タイルでないかチェック
+			if (m_map.IsWall(tileX, tileY)) continue;
+
+			float pixelX = static_cast<float>(tileX * CHIP_SIZE);
+			float pixelY = static_cast<float>(tileY * CHIP_SIZE);
+			Vec2 candidatePos(pixelX, pixelY);
+
+			// 2. プレイヤーのすぐ近くには配置しない（距離判定）
+			Vec2 playerDiff = candidatePos - m_player.GetPos();
+			if (playerDiff.SqLength() < (CHIP_SIZE * 3) * (CHIP_SIZE * 3)) // プレイヤーから3マス以上離す
 			{
-				float pixelX = static_cast<float>(tileX * CHIP_SIZE);
-				float pixelY = static_cast<float>(tileY * CHIP_SIZE);
+				continue;
+			}
 
-				m_enemies[i].SetPos(Vec2(pixelX, pixelY));
-				break; // 1体分の配置に成功したらループを抜ける
+			// 3. 既に配置した他の敵と重ならないかチェック
+			bool isOverlap = false;
+			for (int j = 0; j < i; j++)
+			{
+				Vec2 enemyDiff = candidatePos - m_enemies[j].GetPos();
+				if (enemyDiff.SqLength() < (CHIP_SIZE * 2) * (CHIP_SIZE * 2)) // 他の敵から2マス以上離す
+				{
+					isOverlap = true;
+					break;
+				}
+			}
+
+			// 重なっていなければ位置を決定して次の敵へ
+			if (!isOverlap)
+			{
+				m_enemies[i].SetPos(candidatePos);
+				break;
 			}
 		}
 	}

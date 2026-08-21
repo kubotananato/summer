@@ -64,11 +64,13 @@ void Enemy::Init()
 	m_dir.x = 1.0f;
 	m_dir.y = 0.0f;
 
-	m_animFrame = 0;
+	// ★ 敵ごとのアニメーションと徘徊タイマーをバラバラにずらして同期を防ぐ
+	m_animFrame = std::rand() % 60;
+	m_wanderTimer = std::rand() % 60;
+
 	m_isDead = false;
 	m_isMoving = false;
 	m_state = State::Wander;
-	m_wanderTimer = 0;
 
 	m_hp = kDefaultHP;
 }
@@ -117,14 +119,20 @@ void Enemy::Update(const Vec2& playerPos)
 		UpdateChase(toPlayer, dist);
 	}
 
-	// 4. 移動処理の反映と向き（反転・アニメーション）の決定
+	// 4. 移動処理の反映
 	m_pos.x += m_vec.x;
 	m_pos.y += m_vec.y;
+
+	// ★ 【追加】画面外に出てしまわないように座標を画面内に制限（クランプ）する
+	if (m_pos.x < 0.0f) m_pos.x = 0.0f;
+	if (m_pos.y < 0.0f) m_pos.y = 0.0f;
+	if (m_pos.x > Game::kScreenWidth - kWidth)  m_pos.x = static_cast<float>(Game::kScreenWidth - kWidth);
+	if (m_pos.y > Game::kScreenHeight - kHeight) m_pos.y = static_cast<float>(Game::kScreenHeight - kHeight);
 
 	// 移動中フラグの更新
 	m_isMoving = (m_vec.x != 0.0f || m_vec.y != 0.0f);
 
-	// 左を向いていたら画像を反転（描画の仕様に合わせて調整）
+	// 左を向いていたら画像を反転
 	if (m_dir.x < -0.1f)
 	{
 		m_isFlip = true;
@@ -143,7 +151,7 @@ bool Enemy::CanSeePlayer(const Vec2& toPlayer, float dist) const
 	// プレイヤー方向の単位ベクトル
 	Vec2 targetDir = Vec2(toPlayer.x / dist, toPlayer.y / dist);
 
-	// 敵の正面向ベクトル(m_dir)との内積を計算
+	// 敵の正向ベクトル(m_dir)との内積を計算
 	float dot = m_dir.x * targetDir.x + m_dir.y * targetDir.y;
 
 	// 内積結果が指定角度（cos45° ≒ 0.707）以上なら視界内
@@ -194,9 +202,11 @@ void Enemy::UpdateChase(const Vec2& toPlayer, float dist)
 
 void Enemy::Draw()
 {
-	// 移動中かどうかでアニメーションを変更する
-	int tempTotalFrame = m_isMoving ? kRunAnimTotalFrame : kIdleAnimTotalFrame;
-	int currentHandle = m_isMoving ? m_RunHandle : m_IdleHandle;
+	// ★ 移動中で、かつ走り用ハンドルが正しく読み込めている場合のみ走りアニメーションを使う
+	bool canUseRun = m_isMoving && (m_RunHandle != -1);
+
+	int tempTotalFrame = canUseRun ? kRunAnimTotalFrame : kIdleAnimTotalFrame;
+	int currentHandle = canUseRun ? m_RunHandle : m_IdleHandle;
 
 	// 現在のフレーム数から表示したいコマ番号を計算
 	int animNo = (m_animFrame % tempTotalFrame) / kSingleAnimFrame;
@@ -218,23 +228,26 @@ void Enemy::Draw()
 	}
 
 #ifdef _DEBUG
-	// 当たり判定用のデバッグ表示
 	Vec2 center = GetColCenter();
+
+	// 1. 敵の向いている角度（ラジアン）と視野角（半角）を計算
+	float facingAngle = std::atan2(m_dir.y, m_dir.x);
+	float halfFov = std::acos(kViewCos);
+
+	// 2. 視界の左端・右端の角度
+	float leftAngle = facingAngle - halfFov;
+	float rightAngle = facingAngle + halfFov;
+
+	// 3. 視界の端点座標を計算
+	int leftX = static_cast<int>(center.x + std::cos(leftAngle) * kSearchRadius);
+	int leftY = static_cast<int>(center.y + std::sin(leftAngle) * kSearchRadius);
+	int rightX = static_cast<int>(center.x + std::cos(rightAngle) * kSearchRadius);
+	int rightY = static_cast<int>(center.y + std::sin(rightAngle) * kSearchRadius);
+
+	// 8. 当たり判定の円（赤線）
 	DrawCircle(static_cast<int>(center.x), static_cast<int>(center.y), static_cast<int>(GetColRadius()), GetColor(255, 0, 0), false);
-
-	// 敵の正面方向ラインを表示（赤色）
-	DrawLine(static_cast<int>(center.x), static_cast<int>(center.y),
-		static_cast<int>(center.x + m_dir.x * 30.0f), static_cast<int>(center.y + m_dir.y * 30.0f),
-		GetColor(255, 0, 0));
-
-	// 追尾状態なら黄色い円を表示
-	if (m_state == State::Chase)
-	{
-		DrawCircle(static_cast<int>(center.x), static_cast<int>(center.y), 15, GetColor(255, 255, 0), false);
-	}
 #endif
 }
-
 Vec2 Enemy::GetColCenter() const
 {
 	return Vec2(m_pos.x + kWidth / 2.0f, m_pos.y + kHeight / 2.0f);

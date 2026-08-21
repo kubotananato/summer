@@ -1,5 +1,4 @@
 ﻿#pragma once
-
 #include "Player.h"
 
 class Player;
@@ -41,6 +40,9 @@ private:
 	int m_gainedAtk = 0;
 	bool m_isBoss = false;
 
+	// 背景関連（★追加）
+	int m_bgImgHandle;
+
 	// 敵関連
 	static constexpr int kEnemyAnimFrames = 6;
 	int m_enemyImgHandle[kEnemyAnimFrames];
@@ -77,7 +79,6 @@ private:
 	DamagePopup m_enemyPopup;
 	DamagePopup m_playerPopup;
 
-	int CalculateDamage(int baseDamage, float cariance = 0.2f);
+	int CalculateDamage(int baseDamage, float variance = 0.2f);
 	void SpawnDamagePopup(DamagePopup& popup, int damage, float x, float y);
-
 };
