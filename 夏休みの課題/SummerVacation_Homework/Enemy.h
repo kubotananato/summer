@@ -9,13 +9,13 @@ public:
 
 	void Init();
 	void End();
-	void Update();
+	// ★ プレイヤーの位置を受け取るように変更
+	void Update(const Vec2& playerPos);
 	void Draw();
 
 	// グラフィックハンドルの設定
 	void SetEIdleHandle(int handle) { m_IdleHandle = handle; }
 	void SetERunHandle(int handle) { m_RunHandle = handle; }
-
 
 	// 位置情報の取得
 	Vec2 GetPos()const { return m_pos; }
@@ -27,44 +27,44 @@ public:
 
 	void SetPos(const Vec2& pos) { m_pos = pos; }
 
-	// 登場回数をしゅとくする
-//	int GetApperCount() const { return m_apperCount; }
-
-//	void OnHitPlayer() { m_isHit = true; }
-
 private:
-	// のこぎりを初期位置に設定する
-//	void Setup();
+	// AIの状態定義
+	enum class State
+	{
+		Wander, // 徘徊
+		Chase   // 追尾
+	};
+
+	// AI用ヘルパー関数
+	bool CanSeePlayer(const Vec2& toPlayer, float dist) const;
+	void UpdateWander();
+	void UpdateChase(const Vec2& toPlayer, float dist);
 
 private:
 	// グラフィックハンドル
 	int m_IdleHandle;
 	int m_RunHandle;
 
-//	int m_waitFrame;
-
-	// 位置情報
+	// 位置・移動情報
 	Vec2 m_pos;
 	Vec2 m_lastPos;
-	// 移動情報
 	Vec2 m_vec;
+	Vec2 m_dir; // 向いている方向（単位ベクトル）
+
+	// AI関連
+	State m_state;
+	int m_wanderTimer;
 
 	int m_hp;
 	int m_Attack;
 
-	//アニメーション管理用変数
+	// アニメーション管理用変数
 	int m_animFrame;
-	//左右反転フラグ
+	// 左右反転フラグ
 	bool m_isFlip;
 	// 移動中かどうか
 	bool m_isMoving;
 
 	// 死亡フラグ
 	bool m_isDead;
-
-	// 登場回数
-//	int m_apperCount;
-
-//	bool m_isHit;
-
 };
