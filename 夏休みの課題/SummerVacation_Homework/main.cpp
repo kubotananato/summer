@@ -2,65 +2,57 @@
 #include "Game.h"
 #include "SceneMain.h"
 #include "SceneTitle.h"
-#include "Scenebattle.h" // 小文字の b に統一
+#include "Scenebattle.h" 
+#include "SceneBoss.h"   // ★1. ボス部屋ヘッダーを追加
 #include "SceneClear.h"
 #include "SceneGameOver.h"
 
 enum class Scene
 {
-	Title, // タイトル画面
-	Main,  // ステージ画面
-	Battle, // バトル画面
+	Title,      // タイトル画面
+	Main,       // ステージ画面
+	Boss,       // ★2. ボス部屋画面を追加
+	Battle,     // バトル画面
 	BossBattle, // ボス戦
 	Clear,      // クリア画面
 	GameOver    // ゲームオーバー画面
 };
 
-// プログラムは WinMain から始まります
-int WINAPI WinMain( _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nCmdShow )
+int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nCmdShow)
 {
 	ChangeWindowMode(1);
-
-	// ウインドウサイズを16:9に
 	SetGraphMode(Game::kScreenWidth, Game::kScreenHeight, Game::kColorDepth);
-
 	SetMainWindowText("GameTitle");
-	if( DxLib_Init() == -1 )		// ＤＸライブラリ初期化処理
-	{
-		return -1 ;			// エラーが起きたら直ちに終了
-	}
+
+	if (DxLib_Init() == -1) return -1;
 
 	SetDrawScreen(DX_SCREEN_BACK);
 
 	// ゲームシーンの作成
 	SceneTitle scenetitle;
 	SceneMain scenemain;
+	SceneBoss sceneboss;     // ★3. ボス部屋シーンインスタンスを作成
 	Scenebattle scenebattle;
 	SceneClear sceneclear;
 	SceneGameOver scenegameover;
-	
+
 	Scene currentScene = Scene::Title;
 	scenetitle.Init();
 
 	while (ProcessMessage() == 0 && ClearDrawScreen() == 0)
 	{
-		// 現在のフレーム開始時間時刻を取得
 		LONGLONG start = GetNowHiPerformanceCount();
-
-		// 画面をクリア
 		ClearDrawScreen();
 
-		// ゲームの処理
 		switch (currentScene)
 		{
-			// ★ ここを追加！
 		case Scene::Title:
 			scenetitle.Update();
 			scenetitle.Draw();
 
 			if (scenetitle.isFinished)
 			{
-				scenemain.Init(); // メイン画面の初期化
+				scenemain.Init();
 				currentScene = Scene::Main;
 			}
 			break;
@@ -76,11 +68,23 @@ int WINAPI WinMain( _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 				scenebattle.Init(scenemain.GetPlayer(), false); // 通常戦
 				currentScene = Scene::Battle;
 			}
-			// ② 階段に触れてボス戦への遷移
+			// ② 階段に触れて「ボス部屋」へ遷移
 			else if (scenemain.isGoToBoss)
 			{
 				scenemain.isGoToBoss = false;
-				scenebattle.Init(scenemain.GetPlayer(), true); // ボス戦！
+				sceneboss.Init(scenemain.GetPlayer()); // ★ ボス部屋の初期化
+				currentScene = Scene::Boss;
+			}
+			break;
+
+		case Scene::Boss: // ★4. ボス部屋の処理を追加
+			sceneboss.Update();
+			sceneboss.Draw();
+
+			// ボスと会話を終えて戦闘開始フラグが立った時
+			if (sceneboss.IsGoToBossBattle())
+			{
+				scenebattle.Init(scenemain.GetPlayer(), true); // ボス戦開始！
 				currentScene = Scene::BossBattle;
 			}
 			break;
@@ -93,13 +97,11 @@ int WINAPI WinMain( _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 			{
 				if (scenebattle.IsLose())
 				{
-					// 敗北したらゲームオーバーへ
 					scenegameover.Init();
 					currentScene = Scene::GameOver;
 				}
 				else
 				{
-					// 勝利・逃走時はメインマップへ戻る
 					currentScene = Scene::Main;
 				}
 			}
@@ -113,49 +115,44 @@ int WINAPI WinMain( _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 			{
 				if (scenebattle.IsWin())
 				{
-					// ボス撃破でゲームクリア！
 					sceneclear.Init();
 					currentScene = Scene::Clear;
 				}
 				else if (scenebattle.IsLose())
 				{
-					// 敗北したらゲームオーバー
 					scenegameover.Init();
 					currentScene = Scene::GameOver;
 				}
 			}
 			break;
 
-		case Scene::Clear: // クリア画面
+		case Scene::Clear:
 			sceneclear.Update();
 			sceneclear.Draw();
 
 			if (sceneclear.isFinished)
 			{
-				scenetitle.Init(); // ★ タイトル画面を初期化して戻る
+				scenetitle.Init();
 				currentScene = Scene::Title;
 			}
 			break;
 
-		case Scene::GameOver: // ゲームオーバー画面
+		case Scene::GameOver:
 			scenegameover.Update();
 			scenegameover.Draw();
 
 			if (scenegameover.isFinished)
 			{
-				scenetitle.Init(); // ★ タイトル画面を初期化して戻る
+				scenetitle.Init();
 				currentScene = Scene::Title;
 			}
 			break;
 		}
 
-		// 画面の書き換え
 		ScreenFlip();
 
-		// escキーを押したらゲームを強制終了
-		if(CheckHitKey(KEY_INPUT_ESCAPE)) break;
+		if (CheckHitKey(KEY_INPUT_ESCAPE)) break;
 
-		// 画面のリフレッシュレートにかかわらず1/60経過するまで待つ
 		while (GetNowHiPerformanceCount() - start < 16667)
 		{
 			Sleep(1);
@@ -164,9 +161,9 @@ int WINAPI WinMain( _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 
 	scenetitle.End();
 	scenemain.End();
+	sceneboss.End(); // ★5. ボス部屋の終了処理
 	scenebattle.End();
 
-	DxLib_End() ;				// ＤＸライブラリ使用の終了処理
-
-	return 0 ;				// ソフトの終了 
+	DxLib_End();
+	return 0;
 }

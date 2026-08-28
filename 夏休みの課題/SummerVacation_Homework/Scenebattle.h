@@ -69,6 +69,8 @@ private:
 	int m_lastDamageToEnemy;
 	int m_lastDamageToPlayer;
 
+	int m_effectTimer = 0; // エフェクト演出用のタイマー
+
 private:
 	struct DamagePopup
 	{

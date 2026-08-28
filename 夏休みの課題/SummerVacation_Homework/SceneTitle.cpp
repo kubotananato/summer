@@ -16,7 +16,7 @@ void SceneTitle::Init()
 {
 	isFinished = false;
 
-	// ★ 起動時や他画面からのボタン押しっぱなし持ち越しを防ぐ
+	// 起動時や他画面からのボタン押しっぱなし持ち越しを防ぐ
 	m_oldPad = GetJoypadInputState(DX_INPUT_KEY_PAD1);
 	m_oldSpace = CheckHitKey(KEY_INPUT_SPACE) || CheckHitKey(KEY_INPUT_Z) || CheckHitKey(KEY_INPUT_RETURN);
 }
@@ -30,7 +30,7 @@ void SceneTitle::Update()
 	int currentPad = GetJoypadInputState(DX_INPUT_KEY_PAD1);
 	bool currentSpace = CheckHitKey(KEY_INPUT_SPACE) || CheckHitKey(KEY_INPUT_Z) || CheckHitKey(KEY_INPUT_RETURN);
 
-	// ★ 押した「瞬間」だけを検出（トリガー判定）
+	// 押した「瞬間」だけを検出（トリガー判定）
 	int pushPad = currentPad & ~m_oldPad;
 	bool pushSpace = currentSpace && !m_oldSpace;
 
@@ -46,5 +46,5 @@ void SceneTitle::Update()
 
 void SceneTitle::Draw()
 {
-	DrawString(200, 200, "=== TITLE SCREEN (Press SPACE) ===", GetColor(255, 255, 255));
+	DrawString(200, 200, "=== 勇者の軌跡 (Press SPACE) ===", GetColor(255, 255, 255));
 }

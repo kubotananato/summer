@@ -6,7 +6,8 @@
 
 Map::Map() :
 	m_floorHandle(-1),
-	m_wallHandle(-1)
+	m_wallHandle(-1),
+	m_stairsHandle(-1)
 {
 	// 配列の初期化（すべて 0 にしておく）
 	for (int y = 0; y < MAP_HEIGHT; y++)
@@ -24,11 +25,27 @@ Map::~Map()
 
 void Map::Init()
 {
-	// 画像ファイルを読み込む
-	m_floorHandle = LoadGraph("data/Bg/floor.png");
-	m_wallHandle = LoadGraph("data/HealPoint/Map/wall.png");
+	// 引数なしで呼ばれた場合は、デフォルトの map.csv を指定して実行する
+	Init("data/map.csv");
+}
 
-	// 読み込みチェック
+void Map::Init(const char* filePath)
+{
+	// 1. 画像ファイルを読み込む（まだ読み込まれていない場合のみ）
+	if (m_floorHandle == -1)
+	{
+		m_floorHandle = LoadGraph("data/Bg/floor.png");
+	}
+	if (m_wallHandle == -1)
+	{
+		m_wallHandle = LoadGraph("data/HealPoint/Map/wall.png");
+	}
+	if (m_stairsHandle == -1)
+	{
+		m_stairsHandle = LoadGraph("data/Bg/stairs.png");
+	}
+
+	// 2. 読み込みチェック
 	if (m_floorHandle == -1)
 	{
 		OutputDebugStringA("床画像の読み込みに失敗しました\n");
@@ -37,9 +54,13 @@ void Map::Init()
 	{
 		OutputDebugStringA("壁画像の読み込みに失敗しました\n");
 	}
+	if (m_stairsHandle == -1)
+	{
+		OutputDebugStringA("階段画像の読み込みに失敗しました\n");
+	}
 
-	// CSVファイルを読み込む
-	LoadCSV("data/map.csv");
+	// 3. 指定された CSV ファイルを読み込む
+	LoadCSV(filePath);
 }
 
 void Map::End()
@@ -47,6 +68,11 @@ void Map::End()
 	// メモリから画像を削除する
 	DeleteGraph(m_floorHandle);
 	DeleteGraph(m_wallHandle);
+	if (m_stairsHandle != -1)
+	{
+		DeleteGraph(m_stairsHandle);
+		m_stairsHandle = -1;
+	}
 }
 
 void Map::LoadCSV(const char* filePath)
@@ -122,30 +148,37 @@ void Map::Draw()
 			int drawX2 = drawX1 + CHIP_SIZE;
 			int drawY2 = drawY1 + CHIP_SIZE;
 
-			// Draw() 内の修正例
-
-			if (m_mapData[y][x] == 1)
+			if (m_mapData[y][x] == 1) // 壁
 			{
 				SetDrawMode(DX_DRAWMODE_NEAREST);
 				SetDrawBright(180, 180, 180);
-				// 右と下を +1px（必要なら +2px）大きくして重ねる
 				DrawExtendGraph(drawX1, drawY1, drawX2 + 1, drawY2 + 1, m_wallHandle, TRUE);
 				SetDrawBright(255, 255, 255);
 				SetDrawMode(DX_DRAWMODE_BILINEAR);
 			}
-			else
+			else if (m_mapData[y][x] == 2) // 階段マス
 			{
 				SetDrawMode(DX_DRAWMODE_NEAREST);
-				// 右と下を +1px（必要なら +2px）大きくして重ねる
+				// 下地に床を描画
+				DrawExtendGraph(drawX1, drawY1, drawX2 + 1, drawY2 + 1, m_floorHandle, TRUE);
+
+				// 床の上に階段画像を重ねて描画
+				if (m_stairsHandle != -1)
+				{
+					DrawExtendGraph(drawX1, drawY1, drawX2, drawY2, m_stairsHandle, TRUE);
+				}
+				SetDrawMode(DX_DRAWMODE_BILINEAR);
+			}
+			else // 床 (0)
+			{
+				SetDrawMode(DX_DRAWMODE_NEAREST);
 				DrawExtendGraph(drawX1, drawY1, drawX2 + 1, drawY2 + 1, m_floorHandle, TRUE);
 				SetDrawMode(DX_DRAWMODE_BILINEAR);
 			}
 		}
 	}
-
 }
 
-// Map.cpp の一番下などに追加
 bool Map::IsWall(int mapX, int mapY) const
 {
 	// 画面外に出てしまう場合は壁扱いにして外に出られないようにする
@@ -156,4 +189,15 @@ bool Map::IsWall(int mapX, int mapY) const
 
 	// 1 だったら壁（true）、それ以外なら床（false）を返す
 	return m_mapData[mapY][mapX] == 1;
+}
+
+bool Map::IsStairs(int mapX, int mapY) const
+{
+	if (mapX < 0 || mapX >= MAP_WIDTH || mapY < 0 || mapY >= MAP_HEIGHT)
+	{
+		return false;
+	}
+
+	// 2 だったら階段（true）を返す
+	return m_mapData[mapY][mapX] == 2;
 }

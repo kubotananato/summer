@@ -26,6 +26,8 @@ namespace
 Player::Player() :
 	m_idleHandle(-1),
 	m_runHandle(-1),
+	m_seAttackHandle(-1),
+	m_isPrevAttackKey(false),
 	m_animFrame(0),
 	m_isMoving(false),
 	m_angle(0.0f),
@@ -59,9 +61,10 @@ void Player::Init()
 	m_animFrame = 0;
 	m_isDead = false;
 	m_isMoving = false;
+	m_isPrevAttackKey = false;
 	m_dir = Direction::Down; // 初期位置
 
-	// --- ★ステータスの初期化 ---
+	// --- ステータスの初期化 ---
 	m_level = 1;
 	m_exp = 0;
 	m_nextLevelExp = 30; // 最初にレベル2に必要な経験値
@@ -74,10 +77,33 @@ void Player::Init()
 
 	m_attack = kDefaultAttack;
 	m_Speed = kSpeed;
+
+	// 攻撃SE(MP3)の読み込み処理を追加・修正
+	if (m_seAttackHandle == -1)
+	{
+		// MP3をメモリ上に展開して読み込む設定（レスポンス遅延の防止）
+		SetCreateSoundDataType(DX_SOUNDDATATYPE_MEMPRESS);
+
+		m_seAttackHandle = LoadSoundMem("data/Player/Sold.mp3");
+
+		// 設定をデフォルトに戻す
+		SetCreateSoundDataType(DX_SOUNDDATATYPE_MEMNOPRESS);
+
+		// エラーチェック（失敗時はVisual Studioの「出力」ウィンドウにメッセージを表示）
+		if (m_seAttackHandle == -1)
+		{
+			OutputDebugStringA("★【エラー】data/Player/Sold.mp3 の読み込みに失敗しました！\n");
+		}
+	}
 }
 
 void Player::End()
 {
+	if (m_seAttackHandle != -1)
+	{
+		DeleteSoundMem(m_seAttackHandle);
+		m_seAttackHandle = -1;
+	}
 }
 
 void Player::Update(const Map& map)
@@ -90,6 +116,17 @@ void Player::Update(const Map& map)
 		m_vec.x = 0.0f;
 		m_vec.y = 0.0f;
 		m_isMoving = false;
+
+		// --- 攻撃SEの再生判定 (Zキー または パッドの1番ボタン) ---
+		bool isAttackKey = (CheckHitKey(KEY_INPUT_Z) || (pad & PAD_INPUT_1));
+		if (isAttackKey && !m_isPrevAttackKey)
+		{
+			if (m_seAttackHandle != -1)
+			{
+				PlaySoundMem(m_seAttackHandle, DX_PLAYTYPE_BACK);
+			}
+		}
+		m_isPrevAttackKey = isAttackKey; // 入力状態の更新
 
 		if (pad & PAD_INPUT_UP)
 		{
@@ -126,9 +163,7 @@ void Player::Update(const Map& map)
 			m_animFrame = kSingleAnimFrame;
 		}
 
-		// --------------------------------------------------
 		// 壁判定付きの移動処理
-		// --------------------------------------------------
 
 		// X軸方向の移動チェック
 		if (m_vec.x != 0.0f)
@@ -228,7 +263,6 @@ void Player::TakeDamage(int damage)
 	}
 }
 
-// ★追加：MP消費処理
 bool Player::ConsumeMp(int cost)
 {
 	if (m_mp >= cost)
@@ -239,7 +273,6 @@ bool Player::ConsumeMp(int cost)
 	return false; // MP不足
 }
 
-// ★追加：経験値獲得＆レベルアップ処理
 bool Player::GainExp(int exp)
 {
 	m_exp += exp;

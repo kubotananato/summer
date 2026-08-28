@@ -2,6 +2,7 @@
 #include "DxLib.h"
 #include "Game.h"
 #include "Player.h"
+#include "BGM.h"
 
 namespace
 {
@@ -80,6 +81,18 @@ void Scenebattle::Init(Player* pPlayer, bool isBoss)
 	m_pPlayer = pPlayer;
 	m_isBoss = isBoss;
 
+	// ★ 追加：ボス戦と雑魚戦でBGMを切り替える
+	if (m_isBoss)
+	{
+		// ボス戦用BGM（魔王魂の「戦闘08」や「魔王」など）
+		BgmManager::Play("data/Enemy/Boss.mp3", 180);
+	}
+	else
+	{
+		// 通常戦闘用BGM（魔王魂の「戦闘01」や「戦闘03」など）
+		BgmManager::Play("data/Enemy/Enemy.mp3", 150);
+	}
+
 	if (m_isBoss)
 	{
 		m_enemyMaxHp = 250;     // ボスの最大HP
@@ -119,13 +132,15 @@ void Scenebattle::Init(Player* pPlayer, bool isBoss)
 
 	if (m_isBoss && m_bossImgHandle[0] == -1)
 	{
-		// 幅500×高さ100の画像（1コマ125×100）
-		LoadDivGraph("data/Enemy/BIdle.png", 4, 4, 1, 125, 100, m_bossImgHandle);
+		// 1コマ幅 100, 高さ 100 に変更
+		LoadDivGraph("data/Enemy/BIdle.png", 4, 4, 1, 100, 100, m_bossImgHandle);
 	}
 }
 
 void Scenebattle::End()
 {
+	BgmManager::Stop();
+
 	// 背景画像のメモリ解放
 	if (m_bgImgHandle != -1)
 	{
@@ -157,6 +172,12 @@ void Scenebattle::Update()
 	if (m_pPlayer == nullptr) return;
 
 	m_animTimer++;
+
+	// ★ 追加：エフェクトタイマーの減算処理（これを入れないとタイマーが減りません）
+	if (m_effectTimer > 0)
+	{
+		m_effectTimer--;
+	}
 
 	// ダメージポップアップの更新処理
 	if (m_enemyPopup.active)
@@ -216,6 +237,8 @@ void Scenebattle::Update()
 				m_lastDamageToEnemy = CalculateDamage(m_pPlayer->GetAttack() + 5, 0.2f);
 				m_enemyHp -= m_lastDamageToEnemy;
 
+				m_effectTimer = 20; // プレイヤー攻撃エフェクトの時間をセット
+
 				int enemyCenterX = (150 + Game::kScreenWidth - 30) / 2;
 				SpawnDamagePopup(m_enemyPopup, m_lastDamageToEnemy, static_cast<float>(enemyCenterX - 10), 100.0f);
 			}
@@ -226,6 +249,8 @@ void Scenebattle::Update()
 					m_state = BattleState::PlayerMagic;
 					m_lastDamageToEnemy = CalculateDamage(m_pPlayer->GetAttack() * 2, 0.15f);
 					m_enemyHp -= m_lastDamageToEnemy;
+
+					m_effectTimer = 20; // じゅもん攻撃時もエフェクトタイマーをセット！
 
 					int enemyCenterX = (150 + Game::kScreenWidth - 30) / 2;
 					SpawnDamagePopup(m_enemyPopup, m_lastDamageToEnemy, static_cast<float>(enemyCenterX - 10), 100);
@@ -238,6 +263,7 @@ void Scenebattle::Update()
 			else if (m_cursorIndex == 2) // にげる
 			{
 				isFinished = true;
+				BgmManager::Stop();
 			}
 
 			// 敵撃破判定
@@ -273,6 +299,8 @@ void Scenebattle::Update()
 			m_lastDamageToPlayer = CalculateDamage(m_enemyAttack, 0.2f);
 			m_pPlayer->TakeDamage(m_lastDamageToPlayer);
 
+			m_effectTimer = 20; // 敵の攻撃エフェクトの時間をセット
+
 			SpawnDamagePopup(m_playerPopup, m_lastDamageToPlayer, 80, 50);
 
 			if (m_pPlayer->IsDead())
@@ -288,23 +316,42 @@ void Scenebattle::Update()
 		case BattleState::Win:
 		case BattleState::Lose:
 			isFinished = true;
+			BgmManager::Stop();
 			break;
 		}
 	}
+
+
 }
 
 void Scenebattle::Draw()
 {
+	// 敵の攻撃時は画面全体を揺らす（画面シェイク）
+	int shakeX = 0;
+	int shakeY = 0;
+	if (m_state == BattleState::EnemyAttack && m_effectTimer > 0)
+	{
+		shakeX = GetRand(8) - 4; // -4〜+4 ピクセル揺らす
+		shakeY = GetRand(8) - 4;
+	}
+
 	// 全体の背景暗転
 	DrawBox(0, 0, Game::kScreenWidth, Game::kScreenHeight, GetColor(15, 15, 25), TRUE);
 
-	// ステータスウィンドウ
-	int statusX1 = 30;
-	int statusY1 = 20;
-	int statusX2 = 140;
-	int statusY2 = 135;
+	// ステータスウィンドウ（シェイク位置を反映）
+	int statusX1 = 30 + shakeX;
+	int statusY1 = 20 + shakeY;
+	int statusX2 = 140 + shakeX;
+	int statusY2 = 135 + shakeY;
 
 	DrawDQWindow(statusX1, statusY1, statusX2, statusY2);
+
+	// 敵の攻撃を受けた瞬間、ステータス枠だけを赤く点滅させる
+	if (m_state == BattleState::EnemyAttack && m_effectTimer > 0)
+	{
+		DrawBox(statusX1, statusY1, statusX2, statusY2, kColorRed, FALSE);
+		DrawBox(statusX1 + 1, statusY1 + 1, statusX2 - 1, statusY2 - 1, kColorRed, FALSE);
+	}
 
 	if (m_pPlayer != nullptr)
 	{
@@ -314,11 +361,11 @@ void Scenebattle::Draw()
 		DrawFormatString(statusX1 + 15, statusY1 + 80, kColorWhite, "Lv %2d", m_pPlayer->GetLevel());
 	}
 
-	// 戦闘画面枠
-	int viewX1 = 150;
-	int viewY1 = 20;
-	int viewX2 = Game::kScreenWidth - 30;
-	int viewY2 = 320;
+	// 戦闘画面枠（シェイク位置を反映）
+	int viewX1 = 150 + shakeX;
+	int viewY1 = 20 + shakeY;
+	int viewX2 = Game::kScreenWidth - 30 + shakeX;
+	int viewY2 = 320 + shakeY;
 
 	// 外側の白い太枠
 	DrawBox(viewX1, viewY1, viewX2, viewY2, kColorWhite, TRUE);
@@ -336,6 +383,12 @@ void Scenebattle::Draw()
 	// 敵表示
 	int enemyCenterX = (viewX1 + viewX2) / 2;
 	int enemyCenterY = (viewY1 + viewY2) / 2 - 15;
+
+	// プレイヤーの攻撃中（物理・魔法）は敵を左右にガガガッと揺らす
+	if ((m_state == BattleState::PlayerAttack || m_state == BattleState::PlayerMagic) && m_effectTimer > 0)
+	{
+		enemyCenterX += GetRand(12) - 6;
+	}
 
 	if (m_enemyHp > 0)
 	{
@@ -376,6 +429,12 @@ void Scenebattle::Draw()
 		DrawBox(barX, barY, barX + barWidth, barY + barHeight, kColorGray, TRUE);
 		int currentEnemyBarWidth = (barWidth * m_enemyHp) / m_enemyMaxHp;
 		DrawBox(barX, barY, barX + currentEnemyBarWidth, barY + barHeight, kColorRed, TRUE);
+
+		// プレイヤー攻撃時に敵の上に斬撃ラインを表示
+		if ((m_state == BattleState::PlayerAttack || m_state == BattleState::PlayerMagic) && m_effectTimer > 5)
+		{
+			DrawLine(enemyCenterX - 40, enemyCenterY - 40, enemyCenterX + 40, enemyCenterY + 40, kColorWhite, 5);
+		}
 	}
 
 	// コマンドウィンドウ
@@ -485,6 +544,14 @@ void Scenebattle::Draw()
 
 		// 進行案内テキスト
 		DrawString(textX, msgY2 - 25, "[ SPACE / BUTTON ] つぎへ", GetColor(180, 180, 180));
+	}
+
+	// 敵攻撃時は画面全体を赤く半透明で一瞬光らせる
+	if (m_state == BattleState::EnemyAttack && m_effectTimer > 0)
+	{
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 128);
+		DrawBox(0, 0, Game::kScreenWidth, Game::kScreenHeight, GetColor(255, 0, 0), TRUE);
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND,128);
 	}
 }
 

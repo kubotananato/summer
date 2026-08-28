@@ -30,13 +30,11 @@ void SceneMain::Init()
 	isGoToBoss = false;
 	m_map.Init();
 
-	// ----------------------------------------------------
 	// リソースの読み込み
-	// ----------------------------------------------------
 	m_playerIdleHandle = LoadGraph("data/Player/PIdle.png");
 	m_playerRunHandle = LoadGraph("data/Player/Walk.png");
 	m_enemyIdleHandle = LoadGraph("data/Enemy/EIdle.png");
-	m_enemyRunHandle = LoadGraph("data/Enemy/ERun.png"); // ※必要に応じてパスを変更してください
+	m_enemyRunHandle = LoadGraph("data/Enemy/ERun.png"); 
 	m_healPointHandle = LoadGraph("data/HealPoint/HealPoint.png");
 
 	m_player.SetIdleHandle(m_playerIdleHandle);
@@ -48,9 +46,7 @@ void SceneMain::Init()
 	m_bg.Init();
 	m_healpoint.Init();
 
-	// ----------------------------------------------------
 	// 敵3体の初期化と画像セット
-	// ----------------------------------------------------
 	for (int i = 0; i < kMaxEnemies; i++)
 	{
 		m_enemies[i].Init();
@@ -99,21 +95,18 @@ void SceneMain::Update()
 
 	for (int i = 0; i < kMaxEnemies; i++)
 	{
-		// プレイヤーの位置を渡すように修正
 		m_enemies[i].Update(m_player.GetPos());
 
-		// プレイヤーと各敵との距離判定
 		Vec2 diff = m_player.GetColCenter() - m_enemies[i].GetColCenter();
 		float radiusSum = m_player.GetColRadius() + m_enemies[i].GetColRadius();
 
-		// 3体のうち1体でも当たっていれば Hit とする
 		if (diff.SqLength() <= radiusSum * radiusSum)
 		{
 			m_isHit = true;
 		}
 	}
 
-	// 敵と接触した瞬間に戦闘シーンへ遷移
+	// 敵と接触した瞬間に通常戦闘へ遷移
 	if (m_isHit && !m_wasHit)
 	{
 		isFinished = true;
@@ -128,11 +121,11 @@ void SceneMain::Update()
 		m_isHealHit = (diff.SqLength() <= radiusSum * radiusSum);
 	}
 
-	// 階段（ボス）への到達判定
-	int playerTileX = static_cast<int>((m_player.GetColCenter().x) / CHIP_SIZE);
-	int playerTileY = static_cast<int>((m_player.GetColCenter().y) / CHIP_SIZE);
+	// CSV上で「2」が配置されているマスに乗ったらボス戦へ
+	int playerTileX = static_cast<int>(m_player.GetColCenter().x / CHIP_SIZE);
+	int playerTileY = static_cast<int>(m_player.GetColCenter().y / CHIP_SIZE);
 
-	if (playerTileX == m_stairsTileX && playerTileY == m_stairsTileY)
+	if (m_map.IsStairs(playerTileX, playerTileY))
 	{
 		isGoToBoss = true;
 	}
@@ -186,8 +179,7 @@ void SceneMain::ResetFinished()
 
 void SceneMain::RespawnEnemy()
 {
-	// 画面内のタイル数（例: 画面解像度 640x480 / タイルサイズ 32px の場合）
-	// ※ご自身の画面サイズとCHIP_SIZEに合わせて数値を調整してください
+	// 画面内のタイル数
 	constexpr int kMaxTileX = Game::kScreenWidth / CHIP_SIZE;  // 例: 20
 	constexpr int kMaxTileY = Game::kScreenHeight / CHIP_SIZE; // 例: 15
 

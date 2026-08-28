@@ -28,6 +28,7 @@ public:
 	// 敵3体をランダム位置に再配置する関数
 	void RespawnEnemy();
 
+
 	bool isGoToBoss = false;
 
 private:

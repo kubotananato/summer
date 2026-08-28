@@ -31,6 +31,7 @@ public:
 
 	// 位置取得
 	Vec2 GetPos() const { return m_pos; }
+	void SetPos(const Vec2& pos) { m_pos = pos; }
 
 	// 当たり判定用
 	Vec2 GetColCenter() const;
@@ -93,4 +94,8 @@ private:
 
 	// 死亡フラグ
 	bool m_isDead;
+
+	// SE
+	int m_seAttackHandle;
+	bool m_isPrevAttackKey;
 };
