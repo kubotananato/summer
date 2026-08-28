@@ -41,7 +41,7 @@ namespace
 Scenebattle::Scenebattle() :
 	isFinished(false),
 	m_state(BattleState::Start),
-	m_bgImgHandle(-1), // ★追加
+	m_bgImgHandle(-1), 
 	m_enemyHp(50),
 	m_enemyMaxHp(50),
 	m_enemyAttack(10),
@@ -60,6 +60,11 @@ Scenebattle::Scenebattle() :
 	for (int i = 0; i < kEnemyAnimFrames; i++)
 	{
 		m_enemyImgHandle[i] = -1;
+	}
+
+	for (int i = 0; i < kBossAnimFrames; i++)
+	{
+		m_bossImgHandle[i] = -1;
 	}
 }
 
@@ -111,6 +116,12 @@ void Scenebattle::Init(Player* pPlayer, bool isBoss)
 	{
 		LoadDivGraph("data/Enemy/EIdle.png", 6, 6, 1, 32, 32, m_enemyImgHandle);
 	}
+
+	if (m_isBoss && m_bossImgHandle[0] == -1)
+	{
+		// 幅500×高さ100の画像（1コマ125×100）
+		LoadDivGraph("data/Enemy/BIdle.png", 4, 4, 1, 125, 100, m_bossImgHandle);
+	}
 }
 
 void Scenebattle::End()
@@ -128,6 +139,15 @@ void Scenebattle::End()
 		{
 			DeleteGraph(m_enemyImgHandle[i]);
 			m_enemyImgHandle[i] = -1;
+		}
+	}
+
+	for (int i = 0; i < kBossAnimFrames; i++)
+	{
+		if (m_bossImgHandle[i] != -1)
+		{
+			DeleteGraph(m_bossImgHandle[i]);
+			m_bossImgHandle[i] = -1;
 		}
 	}
 }
@@ -321,10 +341,21 @@ void Scenebattle::Draw()
 	{
 		if (m_isBoss)
 		{
-			DrawCircle(enemyCenterX, enemyCenterY, 80, kColorRed, TRUE);
+			
+			if (m_bossImgHandle[0] != -1)
+			{
+				int currentFrame = (m_animTimer / 10) % kBossAnimFrames;
+				// 2.5 は表示スケール（ボスの大きさに応じて調整してください）
+				DrawRotaGraph(enemyCenterX, enemyCenterY, 3.5, 0.0, m_bossImgHandle[currentFrame], TRUE);
+			}
+			else
+			{
+				DrawCircle(enemyCenterX, enemyCenterY, 80, kColorRed, TRUE); // 画像がない場合のバックアップ
+			}
 		}
 		else
 		{
+			// ザコ敵の描画処理（既存コード）
 			if (m_enemyImgHandle[0] != -1)
 			{
 				int currentFrame = (m_animTimer / 10) % kEnemyAnimFrames;

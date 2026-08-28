@@ -40,7 +40,7 @@ private:
 	int m_gainedAtk = 0;
 	bool m_isBoss = false;
 
-	// 背景関連（★追加）
+	// 背景関連
 	int m_bgImgHandle;
 
 	// 敵関連
@@ -50,6 +50,8 @@ private:
 	int m_enemyHp;
 	int m_enemyMaxHp;
 	int m_enemyAttack;
+	static constexpr int kBossAnimFrames = 4;
+	int m_bossImgHandle[kBossAnimFrames];
 
 	// プレイヤー本体へのポインタ
 	Player* m_pPlayer;
