@@ -5,10 +5,10 @@
         "ProvidedModule": "",
         "Includes": [
             "c:\\users\\naato\\onedrive\\ドキュメント\\github\\summer\\夏休みの課題\\summervacation_homework\\sceneclear.h",
-            "c:\\dxliib\\プロジェクトに追加すべきファイル_vc用\\dxlib.h",
-            "c:\\dxliib\\プロジェクトに追加すべきファイル_vc用\\dxcompileconfig.h",
-            "c:\\dxliib\\プロジェクトに追加すべきファイル_vc用\\dxdatatype.h",
-            "c:\\dxliib\\プロジェクトに追加すべきファイル_vc用\\dxcompileconfig.h",
+            "c:\\users\\naato\\onedrive\\ドキュメント\\github\\summer\\夏休みの課題\\summervacation_homework\\dxlib\\dxlib.h",
+            "c:\\users\\naato\\onedrive\\ドキュメント\\github\\summer\\夏休みの課題\\summervacation_homework\\dxlib\\dxcompileconfig.h",
+            "c:\\users\\naato\\onedrive\\ドキュメント\\github\\summer\\夏休みの課題\\summervacation_homework\\dxlib\\dxdatatype.h",
+            "c:\\users\\naato\\onedrive\\ドキュメント\\github\\summer\\夏休みの課題\\summervacation_homework\\dxlib\\dxcompileconfig.h",
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\ucrt\\stdio.h",
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\ucrt\\corecrt.h",
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\vcruntime.h",
@@ -17,8 +17,8 @@
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\vadefs.h",
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\ucrt\\corecrt_wstdio.h",
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\ucrt\\corecrt_stdio_config.h",
-            "c:\\dxliib\\プロジェクトに追加すべきファイル_vc用\\dxdatatypewin.h",
-            "c:\\dxliib\\プロジェクトに追加すべきファイル_vc用\\dxcompileconfig.h",
+            "c:\\users\\naato\\onedrive\\ドキュメント\\github\\summer\\夏休みの課題\\summervacation_homework\\dxlib\\dxdatatypewin.h",
+            "c:\\users\\naato\\onedrive\\ドキュメント\\github\\summer\\夏休みの課題\\summervacation_homework\\dxlib\\dxcompileconfig.h",
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\windows.h",
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\winapifamily.h",
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\winpackagefamily.h",
@@ -260,7 +260,9 @@
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\pshpack1.h",
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\poppack.h",
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\dpa_dsa.h",
-            "c:\\dxliib\\プロジェクトに追加すべきファイル_vc用\\dxfunctionwin.h"
+            "c:\\users\\naato\\onedrive\\ドキュメント\\github\\summer\\夏休みの課題\\summervacation_homework\\dxlib\\dxfunctionwin.h",
+            "c:\\users\\naato\\onedrive\\ドキュメント\\github\\summer\\夏休みの課題\\summervacation_homework\\bgm.h",
+            "c:\\users\\naato\\onedrive\\ドキュメント\\github\\summer\\夏休みの課題\\summervacation_homework\\game.h"
         ],
         "ImportedModules": [],
         "ImportedHeaderUnits": []

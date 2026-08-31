@@ -37,8 +37,8 @@ private:
 	// シーンで使用するリソースのハンドル
 	int m_playerIdleHandle;
 	int m_playerRunHandle;
-	int m_enemyIdleHandle; // ★ 敵の待機画像
-	int m_enemyRunHandle;  // ★ 敵の移動画像
+	int m_enemyIdleHandle;
+	int m_enemyRunHandle;
 	int m_healPointHandle;
 
 	// 階段用の画像ハンドルと位置

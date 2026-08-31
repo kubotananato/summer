@@ -79,18 +79,16 @@ void Enemy::End()
 {
 }
 
-void Enemy::Update(const Vec2& playerPos)
+void Enemy::Update(const Vec2& playerPos, const Map& map)
 {
 	m_animFrame++;
 	m_lastPos = m_pos;
 
 	if (m_isDead) return;
 
-	// 1. プレイヤーへのベクトルと距離の計算
 	Vec2 toPlayer = Vec2(playerPos.x - m_pos.x, playerPos.y - m_pos.y);
 	float dist = std::sqrt(toPlayer.x * toPlayer.x + toPlayer.y * toPlayer.y);
 
-	// 2. 状態（State）の遷移判定
 	if (m_state == State::Wander)
 	{
 		// 視界範囲内にプレイヤーが入ったら追尾開始
@@ -109,7 +107,6 @@ void Enemy::Update(const Vec2& playerPos)
 		}
 	}
 
-	// 3. 状態ごとの移動処理
 	if (m_state == State::Wander)
 	{
 		UpdateWander();
@@ -119,15 +116,45 @@ void Enemy::Update(const Vec2& playerPos)
 		UpdateChase(toPlayer, dist);
 	}
 
-	// 4. 移動処理の反映
 	m_pos.x += m_vec.x;
-	m_pos.y += m_vec.y;
+	{
+		// 敵の中心や足元のあたりをタイル座標に変換してチェック
+		int tileX = static_cast<int>((m_pos.x + GetColCenter().x - m_pos.x) / CHIP_SIZE); // 中心X
+		int tileY = static_cast<int>((m_pos.y + GetColCenter().y - m_pos.y) / CHIP_SIZE); // 中心Y
 
-	// ★ 【追加】画面外に出てしまわないように座標を画面内に制限（クランプ）する
+
+		int leftTile = static_cast<int>(m_pos.x / CHIP_SIZE);
+		int rightTile = static_cast<int>((m_pos.x + 39.0f) / CHIP_SIZE);
+		int topTile = static_cast<int>(m_pos.y / CHIP_SIZE);
+		int bottomTile = static_cast<int>((m_pos.y + 39.0f) / CHIP_SIZE);
+
+		if (map.IsWall(leftTile, topTile) || map.IsWall(rightTile, topTile) ||
+			map.IsWall(leftTile, bottomTile) || map.IsWall(rightTile, bottomTile))
+		{
+			m_pos.x -= m_vec.x; // 壁にぶつかったらX移動をキャンセル
+		}
+	}
+
+	// Y方向の移動と壁判定
+	m_pos.y += m_vec.y;
+	{
+		int leftTile = static_cast<int>(m_pos.x / CHIP_SIZE);
+		int rightTile = static_cast<int>((m_pos.x + 39.0f) / CHIP_SIZE);
+		int topTile = static_cast<int>(m_pos.y / CHIP_SIZE);
+		int bottomTile = static_cast<int>((m_pos.y + 39.0f) / CHIP_SIZE);
+
+		if (map.IsWall(leftTile, topTile) || map.IsWall(rightTile, topTile) ||
+			map.IsWall(leftTile, bottomTile) || map.IsWall(rightTile, bottomTile))
+		{
+			m_pos.y -= m_vec.y; // 壁にぶつかったらY移動をキャンセル
+		}
+	}
+
+	// 画面外クランプ
 	if (m_pos.x < 0.0f) m_pos.x = 0.0f;
 	if (m_pos.y < 0.0f) m_pos.y = 0.0f;
-	if (m_pos.x > Game::kScreenWidth - kWidth)  m_pos.x = static_cast<float>(Game::kScreenWidth - kWidth);
-	if (m_pos.y > Game::kScreenHeight - kHeight) m_pos.y = static_cast<float>(Game::kScreenHeight - kHeight);
+	if (m_pos.x > Game::kScreenWidth - 40)  m_pos.x = static_cast<float>(Game::kScreenWidth - 40);
+	if (m_pos.y > Game::kScreenHeight - 40) m_pos.y = static_cast<float>(Game::kScreenHeight - 40);
 
 	// 移動中フラグの更新
 	m_isMoving = (m_vec.x != 0.0f || m_vec.y != 0.0f);

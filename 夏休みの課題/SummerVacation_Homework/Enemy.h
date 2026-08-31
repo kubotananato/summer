@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "Vec2.h"
+#include "Map.h"
 
 class Enemy
 {
@@ -9,8 +10,7 @@ public:
 
 	void Init();
 	void End();
-	// ★ プレイヤーの位置を受け取るように変更
-	void Update(const Vec2& playerPos);
+	void Update(const Vec2& playerPos, const Map& map);
 	void Draw();
 
 	// グラフィックハンドルの設定

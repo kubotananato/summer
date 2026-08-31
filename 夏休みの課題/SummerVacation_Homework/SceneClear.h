@@ -8,6 +8,7 @@ public:
 
 	void Init();
 	void Update();
+	void End();
 	void Draw();
 
 	bool isFinished = false;
@@ -15,4 +16,5 @@ public:
 private:
 	int m_oldPad;
 	bool m_oldSpace;
+	int m_fontHandle;
 };

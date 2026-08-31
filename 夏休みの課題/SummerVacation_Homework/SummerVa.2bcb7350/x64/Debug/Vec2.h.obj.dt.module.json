@@ -1,0 +1,14 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "SummerVa.2bcb7350\\x64\\Debug\\Vec2.obj",
+            "outputs": [
+                "SummerVa.2bcb7350\\x64\\Debug\\Vec2.h.obj.dt.module.json",
+                "SummerVa.2bcb7350\\x64\\Debug\\Vec2.h.obj.dt.d.json"
+            ],
+            "requires": []
+        }
+    ]
+}

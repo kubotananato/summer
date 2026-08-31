@@ -260,7 +260,9 @@
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\pshpack1.h",
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\poppack.h",
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\dpa_dsa.h",
-            "c:\\users\\naato\\onedrive\\ドキュメント\\github\\summer\\夏休みの課題\\summervacation_homework\\dxlib\\dxfunctionwin.h"
+            "c:\\users\\naato\\onedrive\\ドキュメント\\github\\summer\\夏休みの課題\\summervacation_homework\\dxlib\\dxfunctionwin.h",
+            "c:\\users\\naato\\onedrive\\ドキュメント\\github\\summer\\夏休みの課題\\summervacation_homework\\bgm.h",
+            "c:\\users\\naato\\onedrive\\ドキュメント\\github\\summer\\夏休みの課題\\summervacation_homework\\game.h"
         ],
         "ImportedModules": [],
         "ImportedHeaderUnits": []

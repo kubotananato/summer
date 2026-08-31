@@ -81,7 +81,7 @@ void Scenebattle::Init(Player* pPlayer, bool isBoss)
 	m_pPlayer = pPlayer;
 	m_isBoss = isBoss;
 
-	// ★ 追加：ボス戦と雑魚戦でBGMを切り替える
+	// ボス戦と雑魚戦でBGMを切り替える
 	if (m_isBoss)
 	{
 		// ボス戦用BGM（魔王魂の「戦闘08」や「魔王」など）

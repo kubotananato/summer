@@ -1,8 +1,9 @@
 ﻿#include "SceneBoss.h"
 #include "DxLib.h"
 #include "Game.h"
-#include "Map.h"     // CHIP_SIZE や Map クラスの関数を使うために必要
-#include "Player.h"  // Player クラスの関数(SetPosなど)を使うために必要
+#include "Map.h"
+#include "Player.h"
+#include "BGM.h"
 
 SceneBoss::SceneBoss() :
 	m_pPlayer(nullptr),
@@ -28,16 +29,18 @@ void SceneBoss::Init(Player* pPlayer)
 	m_isTalked = false;
 	m_animTimer = 0;
 
-	// 1. マップの初期化
+	BgmManager::Play("data/BGM/BossScene.mp3", 100);
+
+	// マップの初期化
 	m_map.Init("data/Bossmap.csv");
 
-	// 2. プレイヤーの位置調整
+	// プレイヤーの位置調整
 	if (m_pPlayer != nullptr)
 	{
 		m_pPlayer->SetPos(Vec2(Game::kScreenWidth / 2.0f - 16.0f, Game::kScreenHeight - 120.0f));
 	}
 
-	// 3. ボス画像（分割画像）の読み込み
+	// ボス画像の読み込み
 	if (m_bossImgHandle[0] == -1)
 	{
 		LoadDivGraph("data/Enemy/BIdle.png", 4, 4, 1, 100, 100, m_bossImgHandle);
@@ -48,6 +51,7 @@ void SceneBoss::Init(Player* pPlayer)
 
 void SceneBoss::End()
 {
+	BgmManager::Stop();
 	m_map.End();
 
 	// 分割画像の削除

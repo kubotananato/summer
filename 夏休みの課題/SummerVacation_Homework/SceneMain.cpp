@@ -2,6 +2,7 @@
 #include "Game.h"
 #include "DxLib.h"
 #include <cstdlib>
+#include "BGM.h"
 
 SceneMain::SceneMain() :
 	m_frameCount(0),
@@ -28,6 +29,7 @@ void SceneMain::Init()
 {
 	isFinished = false; // フラグを確実に初期化
 	isGoToBoss = false;
+	BgmManager::Play("data/BGM/map.mp3", 100);
 	m_map.Init();
 
 	// リソースの読み込み
@@ -60,6 +62,8 @@ void SceneMain::Init()
 
 void SceneMain::End()
 {
+
+	BgmManager::Stop();
 	isFinished = false;
 
 	m_map.End();
@@ -95,7 +99,7 @@ void SceneMain::Update()
 
 	for (int i = 0; i < kMaxEnemies; i++)
 	{
-		m_enemies[i].Update(m_player.GetPos());
+		m_enemies[i].Update(m_player.GetPos(), m_map);
 
 		Vec2 diff = m_player.GetColCenter() - m_enemies[i].GetColCenter();
 		float radiusSum = m_player.GetColRadius() + m_enemies[i].GetColRadius();
@@ -121,7 +125,6 @@ void SceneMain::Update()
 		m_isHealHit = (diff.SqLength() <= radiusSum * radiusSum);
 	}
 
-	// CSV上で「2」が配置されているマスに乗ったらボス戦へ
 	int playerTileX = static_cast<int>(m_player.GetColCenter().x / CHIP_SIZE);
 	int playerTileY = static_cast<int>(m_player.GetColCenter().y / CHIP_SIZE);
 
@@ -179,13 +182,12 @@ void SceneMain::ResetFinished()
 
 void SceneMain::RespawnEnemy()
 {
-	// 画面内のタイル数
-	constexpr int kMaxTileX = Game::kScreenWidth / CHIP_SIZE;  // 例: 20
-	constexpr int kMaxTileY = Game::kScreenHeight / CHIP_SIZE; // 例: 15
+	constexpr int kMaxTileX = Game::kScreenWidth / CHIP_SIZE;
+	constexpr int kMaxTileY = Game::kScreenHeight / CHIP_SIZE;
 
 	for (int i = 0; i < kMaxEnemies; i++)
 	{
-		int attempts = 0; // 無限ループ防止用のカウンター
+		int attempts = 0;
 		while (attempts < 100)
 		{
 			attempts++;
@@ -193,21 +195,18 @@ void SceneMain::RespawnEnemy()
 			int tileX = std::rand() % kMaxTileX;
 			int tileY = std::rand() % kMaxTileY;
 
-			// 1. 壁タイルでないかチェック
 			if (m_map.IsWall(tileX, tileY)) continue;
 
 			float pixelX = static_cast<float>(tileX * CHIP_SIZE);
 			float pixelY = static_cast<float>(tileY * CHIP_SIZE);
 			Vec2 candidatePos(pixelX, pixelY);
 
-			// 2. プレイヤーのすぐ近くには配置しない（距離判定）
 			Vec2 playerDiff = candidatePos - m_player.GetPos();
 			if (playerDiff.SqLength() < (CHIP_SIZE * 3) * (CHIP_SIZE * 3)) // プレイヤーから3マス以上離す
 			{
 				continue;
 			}
 
-			// 3. 既に配置した他の敵と重ならないかチェック
 			bool isOverlap = false;
 			for (int j = 0; j < i; j++)
 			{
@@ -219,7 +218,6 @@ void SceneMain::RespawnEnemy()
 				}
 			}
 
-			// 重なっていなければ位置を決定して次の敵へ
 			if (!isOverlap)
 			{
 				m_enemies[i].SetPos(candidatePos);
