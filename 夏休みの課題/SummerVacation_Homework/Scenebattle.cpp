@@ -173,7 +173,6 @@ void Scenebattle::Update()
 
 	m_animTimer++;
 
-	// ★ 追加：エフェクトタイマーの減算処理（これを入れないとタイマーが減りません）
 	if (m_effectTimer > 0)
 	{
 		m_effectTimer--;
@@ -250,7 +249,7 @@ void Scenebattle::Update()
 					m_lastDamageToEnemy = CalculateDamage(m_pPlayer->GetAttack() * 2, 0.15f);
 					m_enemyHp -= m_lastDamageToEnemy;
 
-					m_effectTimer = 20; // じゅもん攻撃時もエフェクトタイマーをセット！
+					m_effectTimer = 20;
 
 					int enemyCenterX = (150 + Game::kScreenWidth - 30) / 2;
 					SpawnDamagePopup(m_enemyPopup, m_lastDamageToEnemy, static_cast<float>(enemyCenterX - 10), 100);
@@ -326,12 +325,12 @@ void Scenebattle::Update()
 
 void Scenebattle::Draw()
 {
-	// 敵の攻撃時は画面全体を揺らす（画面シェイク）
+	// 敵の攻撃時は画面全体を揺らす
 	int shakeX = 0;
 	int shakeY = 0;
 	if (m_state == BattleState::EnemyAttack && m_effectTimer > 0)
 	{
-		shakeX = GetRand(8) - 4; // -4〜+4 ピクセル揺らす
+		shakeX = GetRand(8) - 4;
 		shakeY = GetRand(8) - 4;
 	}
 
