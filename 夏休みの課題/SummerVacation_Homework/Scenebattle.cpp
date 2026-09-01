@@ -395,7 +395,6 @@ void Scenebattle::Draw()
 			if (m_bossImgHandle[0] != -1)
 			{
 				int currentFrame = (m_animTimer / 10) % kBossAnimFrames;
-				// 2.5 は表示スケール（ボスの大きさに応じて調整してください）
 				DrawRotaGraph(enemyCenterX, enemyCenterY, 3.5, 0.0, m_bossImgHandle[currentFrame], TRUE);
 			}
 			else
@@ -405,7 +404,7 @@ void Scenebattle::Draw()
 		}
 		else
 		{
-			// ザコ敵の描画処理（既存コード）
+			// ザコ敵の描画処理
 			if (m_enemyImgHandle[0] != -1)
 			{
 				int currentFrame = (m_animTimer / 10) % kEnemyAnimFrames;

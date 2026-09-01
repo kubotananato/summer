@@ -1,0 +1,14 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "SummerVa.2bcb7350\\x64\\Release\\Bg.obj",
+            "outputs": [
+                "SummerVa.2bcb7350\\x64\\Release\\Bg.cpp.obj.dt.module.json",
+                "SummerVa.2bcb7350\\x64\\Release\\Bg.cpp.obj.dt.d.json"
+            ],
+            "requires": []
+        }
+    ]
+}

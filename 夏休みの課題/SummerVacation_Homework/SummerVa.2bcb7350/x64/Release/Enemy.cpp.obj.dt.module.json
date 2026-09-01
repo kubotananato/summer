@@ -1,0 +1,14 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "SummerVa.2bcb7350\\x64\\Release\\Enemy.obj",
+            "outputs": [
+                "SummerVa.2bcb7350\\x64\\Release\\Enemy.cpp.obj.dt.module.json",
+                "SummerVa.2bcb7350\\x64\\Release\\Enemy.cpp.obj.dt.d.json"
+            ],
+            "requires": []
+        }
+    ]
+}
