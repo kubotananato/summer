@@ -54,10 +54,9 @@ void SceneClear::End()
 
 void SceneClear::Draw()
 {
-	// 背景をきれいな紺色や黒で塗りつぶす（例：夜空や王宮をイメージした暗い青(10, 20, 40)）
+	// 背景をきれいな紺色や黒で塗りつぶす
 	DrawBox(0, 0, Game::kScreenWidth, Game::kScreenHeight, GetColor(10, 20, 40), TRUE);
 
-	// 「GAME CLEAR」を大きく金色や黄色の文字で表示
 	if (m_fontHandle != -1)
 	{
 		DrawStringToHandle(420, 200, "GAME CLEAR", GetColor(255, 220, 50), m_fontHandle);

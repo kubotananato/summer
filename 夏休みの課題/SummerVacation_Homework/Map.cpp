@@ -25,13 +25,12 @@ Map::~Map()
 
 void Map::Init()
 {
-	// 引数なしで呼ばれた場合は、デフォルトの map.csv を指定して実行する
 	Init("data/map.csv");
 }
 
 void Map::Init(const char* filePath)
 {
-	// 1. 画像ファイルを読み込む（まだ読み込まれていない場合のみ）
+	// 画像ファイルを読み込む
 	if (m_floorHandle == -1)
 	{
 		m_floorHandle = LoadGraph("data/Bg/floor.png");
@@ -45,7 +44,6 @@ void Map::Init(const char* filePath)
 		m_stairsHandle = LoadGraph("data/Bg/stairs.png");
 	}
 
-	// 2. 読み込みチェック
 	if (m_floorHandle == -1)
 	{
 		OutputDebugStringA("床画像の読み込みに失敗しました\n");
@@ -59,7 +57,6 @@ void Map::Init(const char* filePath)
 		OutputDebugStringA("階段画像の読み込みに失敗しました\n");
 	}
 
-	// 3. 指定された CSV ファイルを読み込む
 	LoadCSV(filePath);
 }
 
@@ -104,7 +101,6 @@ void Map::LoadCSV(const char* filePath)
 			line.pop_back();
 		}
 
-		// 空行の場合はスキップ
 		if (line.empty()) continue;
 
 		std::stringstream ss(line);
