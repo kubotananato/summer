@@ -164,8 +164,9 @@ void SceneMain::Draw()
 		DrawString(0, 60, "回復", GetColor(255, 255, 255));
 	}
 
-	DrawFormatString(0, 0, GetColor(255, 255, 255), "HP: %d / %d", m_player.GetHp(), m_player.GetMaxHp());
-	DrawFormatString(0, 16, GetColor(255, 255, 255), "MP: %d / %d", m_player.GetMp(), m_player.GetMaxMp());
+	DrawFormatString(0, 0, GetColor(255, 255, 255), "NAME ゆうしゃ", m_player.GetHp(), m_player.GetMaxHp());
+	DrawFormatString(0, 16, GetColor(255, 255, 255), "HP: %d / %d", m_player.GetHp(), m_player.GetMaxHp());
+	DrawFormatString(0, 32, GetColor(255, 255, 255), "MP: %d / %d", m_player.GetMp(), m_player.GetMaxMp());
 
 //	DrawString(0, 0, "SceneMain", GetColor(255, 255, 255));
 //	DrawFormatString(0, 16, GetColor(255, 255, 255), "FRAME%d", m_frameCount);

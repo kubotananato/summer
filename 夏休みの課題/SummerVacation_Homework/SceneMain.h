@@ -46,7 +46,7 @@ private:
 	int m_stairsTileX;
 	int m_stairsTileY;
 
-	// ★敵3体の配列管理
+	// 敵3体の配列管理
 	static constexpr int kMaxEnemies = 3;
 	Enemy m_enemies[kMaxEnemies];
 

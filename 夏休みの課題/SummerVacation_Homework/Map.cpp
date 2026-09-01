@@ -45,21 +45,9 @@ void Map::Init(const char* filePath)
 		m_stairsHandle = LoadGraph("data/Bg/stairs.png");
 	}
 
-	if (m_floorHandle == -1)
-	{
-		OutputDebugStringA("床画像の読み込みに失敗しました\n");
-	}
-	if (m_wallHandle == -1)
-	{
-		OutputDebugStringA("壁画像の読み込みに失敗しました\n");
-	}
-	if (m_stairsHandle == -1)
-	{
-		OutputDebugStringA("階段画像の読み込みに失敗しました\n");
-	}
-
 	LoadCSV(filePath);
 }
+
 
 void Map::End()
 {
@@ -128,7 +116,6 @@ void Map::LoadCSV(const char* filePath)
 		}
 		y++;
 	}
-	OutputDebugStringA("★CSVファイルの読み込みに成功しました！\n");
 }
 
 void Map::Draw()

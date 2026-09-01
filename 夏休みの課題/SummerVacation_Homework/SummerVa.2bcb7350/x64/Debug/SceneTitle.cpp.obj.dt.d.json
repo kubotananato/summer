@@ -263,7 +263,10 @@
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\dpa_dsa.h",
             "c:\\users\\kubotananato\\documents\\github\\summer\\夏休みの課題\\summervacation_homework\\dxlib\\dxfunctionwin.h",
             "c:\\users\\kubotananato\\documents\\github\\summer\\夏休みの課題\\summervacation_homework\\bgm.h",
-            "c:\\users\\kubotananato\\documents\\github\\summer\\夏休みの課題\\summervacation_homework\\game.h"
+            "c:\\users\\kubotananato\\documents\\github\\summer\\夏休みの課題\\summervacation_homework\\game.h",
+            "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\cstring",
+            "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\yvals_core.h",
+            "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\xkeycheck.h"
         ],
         "ImportedModules": [],
         "ImportedHeaderUnits": []

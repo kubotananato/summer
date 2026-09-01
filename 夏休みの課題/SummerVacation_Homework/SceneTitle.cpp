@@ -2,6 +2,7 @@
 #include "DxLib.h"
 #include "BGM.h"
 #include "Game.h"
+#include <cstring>
 
 SceneTitle::SceneTitle() :
 	isFinished(false),
@@ -57,13 +58,22 @@ void SceneTitle::Update()
 void SceneTitle::Draw()
 {
 	m_titleMap.Draw();
-	DrawBox(0, 0, Game::kScreenWidth, Game::kScreenHeight, GetColor(10, 10, 30), TRUE);
 
-	DrawString(480, 220, "--- 勇者の軌跡 ---", GetColor(255, 220, 50));
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 120);
+	DrawBox(0, 0, Game::kScreenWidth, Game::kScreenHeight, GetColor(0, 0, 0), TRUE);
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+//	DrawBox(0, 0, Game::kScreenWidth, Game::kScreenHeight, GetColor(10, 10, 30), TRUE);
+
+	const char* titleText = "--- 勇者の軌跡 ---";
+	int titleWidth = GetDrawStringWidth(titleText, (int)std::strlen(titleText));
+	int titleX = (Game::kScreenWidth - titleWidth) / 2;
+	DrawString(titleX, 220, titleText, GetColor(255, 220, 50));
 
 	if ((m_blinkTimer / 30) % 2 == 0)
 	{
-		DrawString(460, 420, "- PRESS SPACE or Z KEY -", GetColor(255, 255, 255));
+		const char* pushText = "- PRESS SPACE or Z KEY -";
+		int pushWidth = GetDrawStringWidth(pushText, (int)std::strlen(pushText));
+		int pushX = (Game::kScreenWidth - pushWidth) / 2;
+		DrawString(pushX, 420, pushText, GetColor(255, 255, 255));
 	}
-	DrawString(480, 550, "移動: 方向キー", GetColor(150, 150, 150));
 }
