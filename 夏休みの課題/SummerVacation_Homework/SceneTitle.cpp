@@ -19,6 +19,7 @@ void SceneTitle::Init()
 {
 	isFinished = false;
 	BgmManager::Play("data/BGM/Title.mp3", 150);
+	m_titleMap.Init("data/Title.csv");
 
 	// 起動時や他画面からのボタン押しっぱなし持ち越しを防ぐ
 	m_oldPad = GetJoypadInputState(DX_INPUT_KEY_PAD1);
@@ -29,6 +30,7 @@ void SceneTitle::Init()
 void SceneTitle::End()
 {
 	BgmManager::Stop();
+	m_titleMap.End();
 }
 
 void SceneTitle::Update()
@@ -54,6 +56,7 @@ void SceneTitle::Update()
 
 void SceneTitle::Draw()
 {
+	m_titleMap.Draw();
 	DrawBox(0, 0, Game::kScreenWidth, Game::kScreenHeight, GetColor(10, 10, 30), TRUE);
 
 	DrawString(480, 220, "--- 勇者の軌跡 ---", GetColor(255, 220, 50));

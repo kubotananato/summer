@@ -1,10 +1,21 @@
-﻿  SceneClear.cpp
-C:\Users\naato\OneDrive\ドキュメント\GitHub\summer\夏休みの課題\SummerVacation_Homework\BGM.h(1,1): warning C4819: ファイルは、現在のコード ページ (932) で表示できない文字を含んでいます。データの損失を防ぐために、ファイルを Unicode 形式で保存してください。
-  (ソース ファイル 'SceneClear.cpp' をコンパイルしています)
+﻿  Enemy.cpp
+  Map.cpp
+  Player.cpp
+  SceneBoss.cpp
+C:\Users\KubotaNanato\Documents\GitHub\summer\夏休みの課題\SummerVacation_Homework\BGM.h(1,1): warning C4819: ファイルは、現在のコード ページ (932) で表示できない文字を含んでいます。データの損失を防ぐために、ファイルを Unicode 形式で保存してください。
+  (ソース ファイル 'SceneBoss.cpp' をコンパイルしています)
+  
+  SceneMain.cpp
+C:\Users\KubotaNanato\Documents\GitHub\summer\夏休みの課題\SummerVacation_Homework\BGM.h(1,1): warning C4819: ファイルは、現在のコード ページ (932) で表示できない文字を含んでいます。データの損失を防ぐために、ファイルを Unicode 形式で保存してください。
+  (ソース ファイル 'SceneMain.cpp' をコンパイルしています)
+  
+  SceneTitle.cpp
+C:\Users\KubotaNanato\Documents\GitHub\summer\夏休みの課題\SummerVacation_Homework\BGM.h(1,1): warning C4819: ファイルは、現在のコード ページ (932) で表示できない文字を含んでいます。データの損失を防ぐために、ファイルを Unicode 形式で保存してください。
+  (ソース ファイル 'SceneTitle.cpp' をコンパイルしています)
   
   main.cpp
-C:\Users\naato\OneDrive\ドキュメント\GitHub\summer\夏休みの課題\SummerVacation_Homework\BGM.h(1,1): warning C4819: ファイルは、現在のコード ページ (932) で表示できない文字を含んでいます。データの損失を防ぐために、ファイルを Unicode 形式で保存してください。
+C:\Users\KubotaNanato\Documents\GitHub\summer\夏休みの課題\SummerVacation_Homework\BGM.h(1,1): warning C4819: ファイルは、現在のコード ページ (932) で表示できない文字を含んでいます。データの損失を防ぐために、ファイルを Unicode 形式で保存してください。
   (ソース ファイル 'main.cpp' をコンパイルしています)
   
   コードを生成中...
-  SummerVacation_Homework.vcxproj -> C:\Users\naato\OneDrive\ドキュメント\GitHub\summer\夏休みの課題\SummerVacation_Homework\x64\Debug\SummerVacation_Homework.exe
+  SummerVacation_Homework.vcxproj -> C:\Users\KubotaNanato\Documents\GitHub\summer\夏休みの課題\SummerVacation_Homework\x64\Debug\SummerVacation_Homework.exe

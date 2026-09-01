@@ -25,12 +25,11 @@ namespace
 	constexpr int kIdleAnimTotalFrame = kIdleAnimNum * kSingleAnimFrame;
 	constexpr int kRunAnimTotalFrame = kRunAnimNum * kSingleAnimFrame;
 
-	// --- AIパラメータ ---
 	constexpr float kWanderSpeed = 1.0f;     // 徘徊時の移動速度
 	constexpr float kChaseSpeed = 2.0f;      // 追尾時の移動速度
 	constexpr float kSearchRadius = 180.0f;  // 視界の届く距離
 	constexpr float kLoseRadius = 250.0f;    // 諦める距離
-	constexpr float kViewCos = 0.707f;       // 視野角（cos 45° ≒ 前方±45度、全体で90度）
+	constexpr float kViewCos = 0.707f;       // 視野角
 }
 
 Enemy::Enemy() :
@@ -64,7 +63,6 @@ void Enemy::Init()
 	m_dir.x = 1.0f;
 	m_dir.y = 0.0f;
 
-	// ★ 敵ごとのアニメーションと徘徊タイマーをバラバラにずらして同期を防ぐ
 	m_animFrame = std::rand() % 60;
 	m_wanderTimer = std::rand() % 60;
 
@@ -91,7 +89,6 @@ void Enemy::Update(const Vec2& playerPos, const Map& map)
 
 	if (m_state == State::Wander)
 	{
-		// 視界範囲内にプレイヤーが入ったら追尾開始
 		if (CanSeePlayer(toPlayer, dist))
 		{
 			m_state = State::Chase;
@@ -131,7 +128,7 @@ void Enemy::Update(const Vec2& playerPos, const Map& map)
 		if (map.IsWall(leftTile, topTile) || map.IsWall(rightTile, topTile) ||
 			map.IsWall(leftTile, bottomTile) || map.IsWall(rightTile, bottomTile))
 		{
-			m_pos.x -= m_vec.x; // 壁にぶつかったらX移動をキャンセル
+			m_pos.x -= m_vec.x;
 		}
 	}
 
@@ -146,7 +143,7 @@ void Enemy::Update(const Vec2& playerPos, const Map& map)
 		if (map.IsWall(leftTile, topTile) || map.IsWall(rightTile, topTile) ||
 			map.IsWall(leftTile, bottomTile) || map.IsWall(rightTile, bottomTile))
 		{
-			m_pos.y -= m_vec.y; // 壁にぶつかったらY移動をキャンセル
+			m_pos.y -= m_vec.y;
 		}
 	}
 
@@ -156,7 +153,6 @@ void Enemy::Update(const Vec2& playerPos, const Map& map)
 	if (m_pos.x > Game::kScreenWidth - 40)  m_pos.x = static_cast<float>(Game::kScreenWidth - 40);
 	if (m_pos.y > Game::kScreenHeight - 40) m_pos.y = static_cast<float>(Game::kScreenHeight - 40);
 
-	// 移動中フラグの更新
 	m_isMoving = (m_vec.x != 0.0f || m_vec.y != 0.0f);
 
 	// 左を向いていたら画像を反転
@@ -170,18 +166,15 @@ void Enemy::Update(const Vec2& playerPos, const Map& map)
 	}
 }
 
-// 視界判定（距離 ＋ 前方の角度）
+// 視界判定
 bool Enemy::CanSeePlayer(const Vec2& toPlayer, float dist) const
 {
 	if (dist > kSearchRadius || dist <= 0.001f) return false;
 
-	// プレイヤー方向の単位ベクトル
 	Vec2 targetDir = Vec2(toPlayer.x / dist, toPlayer.y / dist);
 
-	// 敵の正向ベクトル(m_dir)との内積を計算
 	float dot = m_dir.x * targetDir.x + m_dir.y * targetDir.y;
 
-	// 内積結果が指定角度（cos45° ≒ 0.707）以上なら視界内
 	return (dot >= kViewCos);
 }
 
@@ -193,16 +186,14 @@ void Enemy::UpdateWander()
 	// タイマー消化時に方向を変更、または一定確率で立ち止まる
 	if (m_wanderTimer <= 0)
 	{
-		m_wanderTimer = 60 + (std::rand() % 90); // 1〜2.5秒間行動を維持
+		m_wanderTimer = 60 + (std::rand() % 90);
 
 		if (std::rand() % 3 == 0)
 		{
-			// 1/3の確率で停止
 			m_vec = Vec2(0.0f, 0.0f);
 		}
 		else
 		{
-			// ランダムな角度を決めて進む
 			float angle = static_cast<float>(std::rand() % 360) * 3.14159f / 180.0f;
 			m_dir.x = std::cos(angle);
 			m_dir.y = std::sin(angle);
@@ -229,7 +220,6 @@ void Enemy::UpdateChase(const Vec2& toPlayer, float dist)
 
 void Enemy::Draw()
 {
-	// ★ 移動中で、かつ走り用ハンドルが正しく読み込めている場合のみ走りアニメーションを使う
 	bool canUseRun = m_isMoving && (m_RunHandle != -1);
 
 	int tempTotalFrame = canUseRun ? kRunAnimTotalFrame : kIdleAnimTotalFrame;
@@ -253,27 +243,24 @@ void Enemy::Draw()
 	{
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 	}
-
+/*
 #ifdef _DEBUG
 	Vec2 center = GetColCenter();
 
-	// 1. 敵の向いている角度（ラジアン）と視野角（半角）を計算
 	float facingAngle = std::atan2(m_dir.y, m_dir.x);
 	float halfFov = std::acos(kViewCos);
 
-	// 2. 視界の左端・右端の角度
 	float leftAngle = facingAngle - halfFov;
 	float rightAngle = facingAngle + halfFov;
 
-	// 3. 視界の端点座標を計算
 	int leftX = static_cast<int>(center.x + std::cos(leftAngle) * kSearchRadius);
 	int leftY = static_cast<int>(center.y + std::sin(leftAngle) * kSearchRadius);
 	int rightX = static_cast<int>(center.x + std::cos(rightAngle) * kSearchRadius);
 	int rightY = static_cast<int>(center.y + std::sin(rightAngle) * kSearchRadius);
 
-	// 8. 当たり判定の円（赤線）
 	DrawCircle(static_cast<int>(center.x), static_cast<int>(center.y), static_cast<int>(GetColRadius()), GetColor(255, 0, 0), false);
 #endif
+*/
 }
 Vec2 Enemy::GetColCenter() const
 {

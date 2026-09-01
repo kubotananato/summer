@@ -51,11 +51,10 @@ public:
 	// 生存フラグ
 	bool IsDead() const;
 
-	// 更新：戦闘・回復用関数 
 	void TakeDamage(int damage);
-	bool ConsumeMp(int cost);  // MP消費（足りていれば true）
-	bool GainExp(int exp);     // 経験値獲得（レベルアップしたら true）
-	void FullHeal();           // HP/MP全回復
+	bool ConsumeMp(int cost);
+	bool GainExp(int exp);
+	void FullHeal();
 
 private:
 	// 向き管理
@@ -80,7 +79,7 @@ private:
 	// 地面についているかどうか
 	bool m_isLanding;
 
-	// ステータス変数
+	// ステータス
 	int m_level;        // レベル
 	int m_exp;          // 累積経験値
 	int m_nextLevelExp; // 次のレベルに必要な経験値

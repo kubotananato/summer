@@ -5,7 +5,7 @@
 
 namespace
 {
-	// グラフィックの切り取りサイズ（32x32px）
+	// グラフィックの切り取りサイズ
 	constexpr int kWidth = 16;
 	constexpr int kHeight = 32;
 
@@ -53,7 +53,6 @@ void HealPoint::Update(Player& player)
 	Vec2 myCenter = GetColCenter();  // ヒールポイントの中心
 	Vec2 playerCenter = player.GetColCenter();  // プレイヤーの中心
 
-	// 2点間の距離の2乗を計算
 	float dx = myCenter.x - playerCenter.x;
 	float dy = myCenter.y - playerCenter.y;
 	float distSq = dx * dx + dy * dy;
@@ -77,12 +76,13 @@ void HealPoint::Draw()
 	DrawRectGraph(static_cast<int>(m_pos.x), static_cast<int>(m_pos.y),
 		animNo * kWidth, 0, kWidth, kHeight,
 		m_HealHandle, true);
+/*
 #ifdef _DEBUG
 	// 当たり判定用のデバッグ表示
 	Vec2 center = GetColCenter();
 	DrawCircle(static_cast<int>(center.x), static_cast<int>(center.y), static_cast<int>(GetColRadius()), GetColor(255, 0, 0), false);
 #endif
-
+*/
 }
 
 Vec2 HealPoint::GetColCenter() const

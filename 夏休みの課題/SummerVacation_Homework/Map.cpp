@@ -28,6 +28,7 @@ void Map::Init()
 	Init("data/map.csv");
 }
 
+
 void Map::Init(const char* filePath)
 {
 	// 画像ファイルを読み込む
@@ -77,7 +78,6 @@ void Map::LoadCSV(const char* filePath)
 	std::ifstream file(filePath);
 	if (!file.is_open())
 	{
-		OutputDebugStringA("★CSVファイルのオープンに失敗しました！\n");
 		return;
 	}
 

@@ -64,10 +64,10 @@ void Player::Init()
 	m_isPrevAttackKey = false;
 	m_dir = Direction::Down; // 初期位置
 
-	// --- ステータスの初期化 ---
+	// ステータスの初期化
 	m_level = 1;
 	m_exp = 0;
-	m_nextLevelExp = 30; // 最初にレベル2に必要な経験値
+	m_nextLevelExp = 30;
 
 	m_maxHp = kDefaultHP;
 	m_hp = m_maxHp;
@@ -78,22 +78,14 @@ void Player::Init()
 	m_attack = kDefaultAttack;
 	m_Speed = kSpeed;
 
-	// 攻撃SE(MP3)の読み込み処理を追加・修正
+	// 攻撃SEの読み込み処理
 	if (m_seAttackHandle == -1)
 	{
-		// MP3をメモリ上に展開して読み込む設定（レスポンス遅延の防止）
 		SetCreateSoundDataType(DX_SOUNDDATATYPE_MEMPRESS);
 
 		m_seAttackHandle = LoadSoundMem("data/Player/Sold.mp3");
 
-		// 設定をデフォルトに戻す
 		SetCreateSoundDataType(DX_SOUNDDATATYPE_MEMNOPRESS);
-
-		// エラーチェック（失敗時はVisual Studioの「出力」ウィンドウにメッセージを表示）
-		if (m_seAttackHandle == -1)
-		{
-			OutputDebugStringA("★【エラー】data/Player/Sold.mp3 の読み込みに失敗しました！\n");
-		}
 	}
 }
 
@@ -117,7 +109,7 @@ void Player::Update(const Map& map)
 		m_vec.y = 0.0f;
 		m_isMoving = false;
 
-		// --- 攻撃SEの再生判定 (Zキー または パッドの1番ボタン) ---
+		// 攻撃SEの再生判定
 		bool isAttackKey = (CheckHitKey(KEY_INPUT_Z) || (pad & PAD_INPUT_1));
 		if (isAttackKey && !m_isPrevAttackKey)
 		{
@@ -162,8 +154,6 @@ void Player::Update(const Map& map)
 		{
 			m_animFrame = kSingleAnimFrame;
 		}
-
-		// 壁判定付きの移動処理
 
 		// X軸方向の移動チェック
 		if (m_vec.x != 0.0f)
@@ -232,12 +222,13 @@ void Player::Draw()
 	);
 
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-
+/*
 #ifdef _DEBUG
 	// 当たり判定用のデバッグ表示
 	Vec2 center = GetColCenter();
 	DrawCircle(static_cast<int>(center.x), static_cast<int>(center.y), static_cast<int>(GetColRadius()), GetColor(255, 0, 0), false);
 #endif
+*/
 }
 
 Vec2 Player::GetColCenter() const

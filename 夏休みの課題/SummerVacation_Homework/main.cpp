@@ -169,13 +169,13 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 		}
 	}
 
-	// 終了時の解放
+
 	scenetitle.End();
 	scenemain.End();
 	sceneboss.End();
 	scenebattle.End();
-	sceneclear.End();     // ★ 追加：クリア画面の終了処理
-	scenegameover.End();  // ★ 追加：ゲームオーバー画面の終了処理
+	sceneclear.End();    
+	scenegameover.End(); 
 
 	DxLib_End();
 	return 0;
