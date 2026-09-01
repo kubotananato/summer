@@ -10,7 +10,6 @@ namespace BgmManager
 {
 	void Play(const char* filePath, int volume)
 	{
-		// すでに流れているBGMがあれば停止して削除する
 		Stop();
 
 		// BGM用にストリーミング形式で読み込む設定

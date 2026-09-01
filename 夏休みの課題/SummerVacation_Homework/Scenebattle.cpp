@@ -17,7 +17,6 @@ namespace
 
 	constexpr int kCommandCount = 3;
 
-	// ドラクエ風ウィンドウを描画する共通関数
 	void DrawDQWindow(int x1, int y1, int x2, int y2)
 	{
 		// 背景の黒塗り
@@ -84,12 +83,12 @@ void Scenebattle::Init(Player* pPlayer, bool isBoss)
 	// ボス戦と雑魚戦でBGMを切り替える
 	if (m_isBoss)
 	{
-		// ボス戦用BGM（魔王魂の「戦闘08」や「魔王」など）
+		// ボス戦用BGM
 		BgmManager::Play("data/Enemy/Boss.mp3", 180);
 	}
 	else
 	{
-		// 通常戦闘用BGM（魔王魂の「戦闘01」や「戦闘03」など）
+		// 通常戦闘用BGM
 		BgmManager::Play("data/Enemy/Enemy.mp3", 150);
 	}
 
@@ -132,7 +131,6 @@ void Scenebattle::Init(Player* pPlayer, bool isBoss)
 
 	if (m_isBoss && m_bossImgHandle[0] == -1)
 	{
-		// 1コマ幅 100, 高さ 100 に変更
 		LoadDivGraph("data/Enemy/BIdle.png", 4, 4, 1, 100, 100, m_bossImgHandle);
 	}
 }
@@ -402,7 +400,7 @@ void Scenebattle::Draw()
 			}
 			else
 			{
-				DrawCircle(enemyCenterX, enemyCenterY, 80, kColorRed, TRUE); // 画像がない場合のバックアップ
+				DrawCircle(enemyCenterX, enemyCenterY, 80, kColorRed, TRUE);
 			}
 		}
 		else
@@ -572,6 +570,6 @@ void Scenebattle::SpawnDamagePopup(DamagePopup& popup, int damage, float x, floa
 	popup.damage = damage;
 	popup.x = x;
 	popup.y = y;
-	popup.timer = 40; // 40フレーム（約0.6秒）表示
+	popup.timer = 40;
 	popup.active = true;
 }

@@ -28,7 +28,6 @@ public:
 	void SetPos(const Vec2& pos) { m_pos = pos; }
 
 private:
-	// AIの状態定義
 	enum class State
 	{
 		Wander, // 徘徊

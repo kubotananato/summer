@@ -83,7 +83,7 @@ void SceneBoss::Update()
 	{
 		m_pPlayer->Update(m_map);
 
-		// ボスとの距離判定（近づいたらイベント開始）
+		// ボスとの距離判定
 		Vec2 diff = m_pPlayer->GetColCenter() - m_bossPos;
 		if (diff.SqLength() < (CHIP_SIZE * 2) * (CHIP_SIZE * 2))
 		{
@@ -104,7 +104,7 @@ void SceneBoss::Draw()
 {
 	m_map.Draw();
 
-	// 玉座の前にボスを描画（アニメーション対応）
+	// 玉座の前にボスを描画
 	if (m_bossImgHandle[0] != -1)
 	{
 		int currentFrame = (m_animTimer / 10) % kBossAnimFrames;

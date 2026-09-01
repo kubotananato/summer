@@ -1,12 +1,12 @@
 {
     "Version": "1.2",
     "Data": {
-        "Source": "c:\\users\\naato\\onedrive\\ドキュメント\\github\\summer\\夏休みの課題\\summervacation_homework\\sceneboss.h",
+        "Source": "c:\\users\\kubotananato\\documents\\github\\summer\\夏休みの課題\\summervacation_homework\\sceneboss.h",
         "ProvidedModule": "",
         "Includes": [
-            "c:\\users\\naato\\onedrive\\ドキュメント\\github\\summer\\夏休みの課題\\summervacation_homework\\map.h",
-            "c:\\users\\naato\\onedrive\\ドキュメント\\github\\summer\\夏休みの課題\\summervacation_homework\\player.h",
-            "c:\\users\\naato\\onedrive\\ドキュメント\\github\\summer\\夏休みの課題\\summervacation_homework\\vec2.h",
+            "c:\\users\\kubotananato\\documents\\github\\summer\\夏休みの課題\\summervacation_homework\\map.h",
+            "c:\\users\\kubotananato\\documents\\github\\summer\\夏休みの課題\\summervacation_homework\\player.h",
+            "c:\\users\\kubotananato\\documents\\github\\summer\\夏休みの課題\\summervacation_homework\\vec2.h",
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\cmath",
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\yvals.h",
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\yvals_core.h",
