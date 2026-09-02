@@ -335,7 +335,7 @@ void Scenebattle::Draw()
 	// 全体の背景暗転
 	DrawBox(0, 0, Game::kScreenWidth, Game::kScreenHeight, GetColor(15, 15, 25), TRUE);
 
-	// ステータスウィンドウ（シェイク位置を反映）
+	// ステータスウィンドウ
 	int statusX1 = 30 + shakeX;
 	int statusY1 = 20 + shakeY;
 	int statusX2 = 140 + shakeX;
@@ -358,7 +358,7 @@ void Scenebattle::Draw()
 		DrawFormatString(statusX1 + 15, statusY1 + 80, kColorWhite, "Lv %2d", m_pPlayer->GetLevel());
 	}
 
-	// 戦闘画面枠（シェイク位置を反映）
+	// 戦闘画面枠
 	int viewX1 = 150 + shakeX;
 	int viewY1 = 20 + shakeY;
 	int viewX2 = Game::kScreenWidth - 30 + shakeX;
@@ -511,12 +511,12 @@ void Scenebattle::Draw()
 		case BattleState::PlayerMagic:
 			if (m_pPlayer != nullptr)
 			{
-				DrawFormatString(textX, textY, kColorWhite, "プレイヤーは じゅもんを唱えた！\n\nモンスターに %d のダメージ！", m_lastDamageToEnemy);
+				DrawFormatString(textX, textY, kColorWhite, "プレイヤーはじゅもんを唱えた！\n\nモンスターに %d のダメージ！", m_lastDamageToEnemy);
 			}
 			break;
 
 		case BattleState::NoMp:
-			DrawString(textX, textY, "MPが 足りない！", GetColor(255, 100, 100));
+			DrawString(textX, textY, "MPが足りない！", GetColor(255, 100, 100));
 			break;
 
 		case BattleState::EnemyAttack:

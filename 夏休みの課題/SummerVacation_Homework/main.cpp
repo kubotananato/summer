@@ -39,6 +39,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 	Scene currentScene = Scene::Title;
 	scenetitle.Init();
+	scenetitle.Draw();
 
 	while (ProcessMessage() == 0 && ClearDrawScreen() == 0)
 	{
@@ -53,6 +54,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 			if (scenetitle.isFinished)
 			{
+				BgmManager::Stop();
 				scenetitle.End(); 
 				scenemain.Init(); // メインへ
 				currentScene = Scene::Main;

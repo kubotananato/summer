@@ -125,7 +125,6 @@ void Map::Draw()
 	{
 		for (int x = 0; x < MAP_WIDTH; x++)
 		{
-			// 1マス（40x40）ごとの描画領域を計算
 			int drawX1 = x * CHIP_SIZE;
 			int drawY1 = y * CHIP_SIZE;
 			int drawX2 = drawX1 + CHIP_SIZE;
@@ -164,7 +163,6 @@ void Map::Draw()
 
 bool Map::IsWall(int mapX, int mapY) const
 {
-	// 画面外に出てしまう場合は壁扱いにして外に出られないようにする
 	if (mapX < 0 || mapX >= MAP_WIDTH || mapY < 0 || mapY >= MAP_HEIGHT)
 	{
 		return true;
