@@ -1,2 +1,18 @@
-﻿  main.cpp
-  SummerVacation_Homework.vcxproj -> C:\Users\KubotaNanato\Documents\GitHub\summer\夏休みの課題\SummerVacation_Homework\x64\Debug\SummerVacation_Homework.exe
+﻿  Bg.cpp
+  BGM.cpp
+C:\Users\naato\OneDrive\ドキュメント\GitHub\summer\夏休みの課題\SummerVacation_Homework\BGM.cpp(1,1): warning C4819: ファイルは、現在のコード ページ (932) で表示できない文字を含んでいます。データの損失を防ぐために、ファイルを Unicode 形式で保存してください。
+  BossBattle.cpp
+  Enemy.cpp
+  HealPoint.cpp
+  main.cpp
+  Map.cpp
+  Player.cpp
+  Scenebattle.cpp
+  SceneBoss.cpp
+  SceneClear.cpp
+  SceneGameOver.cpp
+  SceneMain.cpp
+  SceneTitle.cpp
+  コードを生成中...
+  LINK : 前回のインクリメンタル リンクで C:\Users\naato\OneDrive\ドキュメント\GitHub\summer\夏休みの課題\SummerVacation_Homework\x64\Debug\SummerVacation_Homework.exe が見つからなかったか、ビルドされませんでした。フル リンクを行います。
+  SummerVacation_Homework.vcxproj -> C:\Users\naato\OneDrive\ドキュメント\GitHub\summer\夏休みの課題\SummerVacation_Homework\x64\Debug\SummerVacation_Homework.exe

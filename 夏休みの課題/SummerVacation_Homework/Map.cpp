@@ -52,8 +52,18 @@ void Map::Init(const char* filePath)
 void Map::End()
 {
 	// メモリから画像を削除する
-	DeleteGraph(m_floorHandle);
-	DeleteGraph(m_wallHandle);
+	if (m_floorHandle != -1)
+	{
+		DeleteGraph(m_floorHandle);
+		m_floorHandle = -1;
+	}
+
+	if (m_wallHandle != -1)
+	{
+		DeleteGraph(m_wallHandle);
+		m_wallHandle = -1;
+	}
+
 	if (m_stairsHandle != -1)
 	{
 		DeleteGraph(m_stairsHandle);
