@@ -1,0 +1,12 @@
+{
+    "Version": "1.2",
+    "Data": {
+        "Source": "c:\\users\\kubotananato\\documents\\github\\winterseisaku\\winterseisaku\\game\\player.h",
+        "ProvidedModule": "",
+        "Includes": [
+            "c:\\users\\kubotananato\\documents\\github\\winterseisaku\\winterseisaku\\geometry.h"
+        ],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": []
+    }
+}

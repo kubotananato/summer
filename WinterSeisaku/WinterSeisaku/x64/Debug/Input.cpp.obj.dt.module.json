@@ -1,0 +1,14 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "WinterSeisaku\\x64\\Debug\\Input.obj",
+            "outputs": [
+                "WinterSeisaku\\x64\\Debug\\Input.cpp.obj.dt.module.json",
+                "WinterSeisaku\\x64\\Debug\\Input.cpp.obj.dt.d.json"
+            ],
+            "requires": []
+        }
+    ]
+}

@@ -1,0 +1,14 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "WinterSeisaku\\x64\\Debug\\GameOverScene.obj",
+            "outputs": [
+                "WinterSeisaku\\x64\\Debug\\GameOverScene.cpp.obj.dt.module.json",
+                "WinterSeisaku\\x64\\Debug\\GameOverScene.cpp.obj.dt.d.json"
+            ],
+            "requires": []
+        }
+    ]
+}

@@ -1,0 +1,12 @@
+{
+    "Version": "1.2",
+    "Data": {
+        "Source": "c:\\users\\kubotananato\\documents\\github\\winterseisaku\\winterseisaku\\scene\\gameoverscene.h",
+        "ProvidedModule": "",
+        "Includes": [
+            "c:\\users\\kubotananato\\documents\\github\\winterseisaku\\winterseisaku\\scene\\scenebase.h"
+        ],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": []
+    }
+}
